@@ -11,15 +11,18 @@ public class ServerMenu : MonoBehaviour
 
     void Start()
     {
-        Texture2D code = generateQR(Network.player.ipAddress);
-        QRCode.sprite = Sprite.Create(code, new Rect(0.0f, 0.0f, code.width, code.height), new Vector2(0.5f, 0.5f));
+        if (Network.isClient)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Texture2D code = generateQR(Network.player.ipAddress);
+            QRCode.sprite = Sprite.Create(code, new Rect(0.0f, 0.0f, code.width, code.height), new Vector2(0.5f, 0.5f));
+        }
     }
 
-    void Update()
-    {
-
-    }
-
+    #region QRCode
     private static Color32[] Encode(string textForEncoding, int width, int height)
     {
         var writer = new BarcodeWriter
@@ -42,4 +45,5 @@ public class ServerMenu : MonoBehaviour
         encoded.Apply();
         return encoded;
     }
+    #endregion
 }

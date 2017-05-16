@@ -35,6 +35,7 @@ public class MainMenu : MonoBehaviour
                     SpaceRaceNetworkManager.Instance.networkAddress = result.Text;
                     SpaceRaceNetworkManager.Instance.StartClient();
                     ResultText.text = result.Text;
+                    camTexture.Stop();
                 }
             }
             catch (Exception ex) { Debug.LogWarning(ex.Message); }
@@ -53,6 +54,6 @@ public class MainMenu : MonoBehaviour
 
     public void OnHostClicked()
     {
-        SpaceRaceNetworkManager.Instance.StartHost();
+        SpaceRaceNetworkManager.Instance.StartServer();
     }
 }
