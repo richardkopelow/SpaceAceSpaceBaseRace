@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class PlayerScript : NetworkBehaviour
 {
@@ -17,12 +18,20 @@ public class PlayerScript : NetworkBehaviour
         }
     }
 
-
     void Start()
     {
         if (isLocalPlayer)
         {
-
+            Transform playerUIs = GameObject.Find("PlayerUI").GetComponent<Transform>();
+            Transform componentPicker = playerUIs.GetChild(0);
+            Button redTeamButton = componentPicker.FindChild("RedTeamButton").GetComponent<Button>();
+            redTeamButton.onClick.AddListener(() => CmdAssociate(true));
+            Button disassociateButton = componentPicker.FindChild("DisassociateButton").GetComponent<Button>();
+            disassociateButton.onClick.AddListener(() => CmdDisassociate());
+            Button blueTeamButton = componentPicker.FindChild("BlueTeamButton").GetComponent<Button>();
+            blueTeamButton.onClick.AddListener(() => CmdAssociate(false));
+            Button readyButton = componentPicker.FindChild("ReadyButton").GetComponent<Button>();
+            readyButton.onClick.AddListener(() => CmdSetReady(true));
         }
         if (isServer)
         {
@@ -72,5 +81,23 @@ public class PlayerScript : NetworkBehaviour
             default:
                 break;
         }
+    }
+
+    [Command]
+    public void CmdSetReady(bool isReady)
+    {
+        GameManger.Instance.SetPlayerReady(this, isReady);
+    }
+
+    [Command]
+    private void CmdAssociate(bool redTeam)
+    {
+        GameManger.Instance.Associate(this, redTeam);
+    }
+
+    [Command]
+    private void CmdDisassociate()
+    {
+        GameManger.Instance.Disassociate(this);
     }
 }

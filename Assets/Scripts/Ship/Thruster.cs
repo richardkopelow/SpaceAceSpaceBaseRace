@@ -24,7 +24,7 @@ public class Thruster : ShipComponent
     {
         if (down)
         {
-            rigid.AddForce(trans.up * 10);
+            rigid.AddForceAtPosition(trans.up * 10, trans.position);
         }
     }
 

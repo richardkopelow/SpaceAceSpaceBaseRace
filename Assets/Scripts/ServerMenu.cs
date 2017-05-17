@@ -7,19 +7,15 @@ using ZXing.QrCode;
 
 public class ServerMenu : MonoBehaviour
 {
-    public Image QRCode;
+    public RawImage QRCode;
 
     void Start()
     {
-        if (Network.isClient)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Texture2D code = generateQR(Network.player.ipAddress);
-            QRCode.sprite = Sprite.Create(code, new Rect(0.0f, 0.0f, code.width, code.height), new Vector2(0.5f, 0.5f));
-        }
+        RectTransform qrCodeTrans = QRCode.GetComponent<RectTransform>();
+        int minSize = Screen.width < Screen.height ? Screen.width : Screen.height;
+        qrCodeTrans.sizeDelta = new Vector2(minSize, minSize);
+        Texture2D code = generateQR(Network.player.ipAddress);
+        QRCode.texture = code;
     }
 
     #region QRCode
