@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -47,6 +48,7 @@ public class GameManger : NetworkBehaviour
     {
         players.Add(player);
         PlayerCountText.text = "Players: " + players.Count;
+        UpdatePlayerUIs();
     }
 
     public void Disassociate(PlayerScript player)
@@ -77,6 +79,44 @@ public class GameManger : NetworkBehaviour
         }
     }
 
+    public void ChangeComponent(PlayerScript player, int diff)
+    {
+        player.ComponentIndex += diff;
+    }
+
+    private void UpdatePlayerUI(PlayerScript player)
+    {
+        string data;
+        if (player.Team == PlayerScript.TeamEnum.None)
+        {
+            data = "Disassociated,0";
+        }
+        else
+        {
+            string component = ShipPrefab.ShipComponents[player.ComponentIndex % ShipPrefab.ShipComponents.Length].ComponentName;
+
+            List<PlayerScript> team = player.Team == PlayerScript.TeamEnum.Red ? redTeam : blueTeam;
+            bool available = true;
+            foreach (PlayerScript other in team)
+            {
+                if (other.Ready && other.ComponentIndex == player.ComponentIndex && other != player)
+                {
+                    available = false;
+                }
+            }
+            data = string.Format("{0},{1}", component, available ? 1 : 0);
+        }
+        player.UpdatePlayerUI(data);
+    }
+
+    private void UpdatePlayerUIs()
+    {
+        foreach (PlayerScript player in players)
+        {
+            UpdatePlayerUI(player);
+        }
+    }
+
     public void SetPlayerReady(PlayerScript player, bool isReady)
     {
         if (isReady)
@@ -87,7 +127,7 @@ public class GameManger : NetworkBehaviour
                 bool good = true;
                 foreach (PlayerScript p in players)
                 {
-                    if (!readyPlayers.Contains(p))
+                    if (!p.Ready)
                     {
                         good = false;
                     }
@@ -98,21 +138,28 @@ public class GameManger : NetworkBehaviour
                 }
             }
         }
-        else
-        {
-            readyPlayers.Remove(player);
-        }
+        UpdatePlayerUIs();
     }
 
     public void StartGame()
     {
         ServerUI.SetActive(false);
-        Ship ship = Instantiate<Ship>(ShipPrefab);
-        Transform shipTransform = ship.GetComponent<Transform>();
-        VirtualCamera.Follow = shipTransform;
-        for (int i = 0; i < blueTeam.Count; i++)
+        Ship blueShip = Instantiate<Ship>(ShipPrefab);
+        Transform blueShipTransform = blueShip.GetComponent<Transform>();
+        VirtualCamera.Follow = blueShipTransform;
+        blueShipTransform.position = new Vector3(1, 0, 0);
+        foreach (PlayerScript player in blueTeam)
         {
-            blueTeam[i].ShipComonent = ship.ShipComponents[i];
+            player.ShipComponent = blueShip.ShipComponents[player.ComponentIndex % blueShip.ShipComponents.Length];
+        }
+
+        Ship redShip = Instantiate<Ship>(ShipPrefab);
+        Transform redShipTransform = redShip.GetComponent<Transform>();
+        //VirtualCamera.Follow = redShipTransform;
+        redShipTransform.position = new Vector3(-1, 0, 0);
+        foreach (PlayerScript player in redTeam)
+        {
+            player.ShipComponent = redShip.ShipComponents[player.ComponentIndex % redShip.ShipComponents.Length];
         }
     }
 }

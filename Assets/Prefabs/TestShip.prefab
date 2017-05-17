@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a124f6a24841d145b0f4f6b0b0308bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ComponentName: Left Thruster
   Job: 0
   rigid: {fileID: 50517890411716926}
 --- !u!114 &114560316838176666
@@ -163,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a124f6a24841d145b0f4f6b0b0308bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ComponentName: Right Thruster
   Job: 0
   rigid: {fileID: 50517890411716926}
 --- !u!212 &212197069972754896

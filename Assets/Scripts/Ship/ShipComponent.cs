@@ -9,6 +9,7 @@ public enum JobsEnum
 
 public class ShipComponent : MonoBehaviour
 {
+    public string ComponentName;
     public JobsEnum Job;
 
     public virtual void ButtonDown()
