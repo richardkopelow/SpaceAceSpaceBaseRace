@@ -54,34 +54,34 @@ public class PlayerScript : NetworkBehaviour
         {
             Transform playerUIs = GameObject.Find("PlayerUI").GetComponent<Transform>();
             Transform componentPicker = playerUIs.GetChild(0);
-            Button redTeamButton = componentPicker.FindChild("RedTeamButton").GetComponent<Button>();
+            Button redTeamButton = componentPicker.Find("RedTeamButton").GetComponent<Button>();
             redTeamButton.onClick.AddListener(() => {
                 CmdAssociate(true);
                 Ready = false;
             });
-            Button disassociateButton = componentPicker.FindChild("DisassociateButton").GetComponent<Button>();
+            Button disassociateButton = componentPicker.Find("DisassociateButton").GetComponent<Button>();
             disassociateButton.onClick.AddListener(() => {
                 CmdDisassociate();
                 Ready = false;
             });
-            Button blueTeamButton = componentPicker.FindChild("BlueTeamButton").GetComponent<Button>();
+            Button blueTeamButton = componentPicker.Find("BlueTeamButton").GetComponent<Button>();
             blueTeamButton.onClick.AddListener(() => {
                 CmdAssociate(false);
                 Ready = false;
             });
-            readyButton = componentPicker.FindChild("ReadyButton").GetComponent<Button>();
+            readyButton = componentPicker.Find("ReadyButton").GetComponent<Button>();
             readyButtonText = readyButton.GetComponent<Transform>().GetChild(0).GetComponent<Text>();
-            componentTitle = componentPicker.FindChild("ComponentTitle").GetComponent<Text>();
+            componentTitle = componentPicker.Find("ComponentTitle").GetComponent<Text>();
             readyButton.onClick.AddListener(() =>
             {
                 Ready = !_ready;
             });
-            Button previousComponentButton = componentPicker.FindChild("PreviousComponentButton").GetComponent<Button>();
+            Button previousComponentButton = componentPicker.Find("PreviousComponentButton").GetComponent<Button>();
             previousComponentButton.onClick.AddListener(() => {
                 CmdChangeComponent(false);
                 Ready = false;
             });
-            Button nextComponentButton = componentPicker.FindChild("NextComponentButton").GetComponent<Button>();
+            Button nextComponentButton = componentPicker.Find("NextComponentButton").GetComponent<Button>();
             nextComponentButton.onClick.AddListener(() => {
                 CmdChangeComponent(true);
                 Ready = false;
@@ -131,7 +131,7 @@ public class PlayerScript : NetworkBehaviour
         switch (job)
         {
             case JobsEnum.Thruster:
-                uiTransform.FindChild("ThrusterButton").GetComponent<ThrusterButton>().Player = this;
+                uiTransform.Find("ThrusterButton").GetComponent<ThrusterButton>().Player = this;
                 break;
             default:
                 break;

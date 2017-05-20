@@ -48,7 +48,7 @@ public class GameManger : NetworkBehaviour
     {
         players.Add(player);
         PlayerCountText.text = "Players: " + players.Count;
-        UpdatePlayerUIs();
+        StartCoroutine(delayedUpdatePlayerUIs(0.2f));
     }
 
     public void Disassociate(PlayerScript player)
@@ -93,7 +93,13 @@ public class GameManger : NetworkBehaviour
         }
         else
         {
-            string component = ShipPrefab.ShipComponents[player.ComponentIndex % ShipPrefab.ShipComponents.Length].ComponentName;
+            if (player.ComponentIndex < 0)
+            {
+                player.ComponentIndex = ShipPrefab.ShipComponents.Length + player.ComponentIndex;
+            }
+            player.ComponentIndex = player.ComponentIndex % ShipPrefab.ShipComponents.Length;
+
+            string component = ShipPrefab.ShipComponents[player.ComponentIndex].ComponentName;
 
             List<PlayerScript> team = player.Team == PlayerScript.TeamEnum.Red ? redTeam : blueTeam;
             bool available = true;
@@ -109,12 +115,18 @@ public class GameManger : NetworkBehaviour
         player.UpdatePlayerUI(data);
     }
 
-    private void UpdatePlayerUIs()
+    private void updatePlayerUIs()
     {
         foreach (PlayerScript player in players)
         {
             UpdatePlayerUI(player);
         }
+    }
+
+    private IEnumerator delayedUpdatePlayerUIs(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        updatePlayerUIs();
     }
 
     public void SetPlayerReady(PlayerScript player, bool isReady)
@@ -138,7 +150,7 @@ public class GameManger : NetworkBehaviour
                 }
             }
         }
-        UpdatePlayerUIs();
+        updatePlayerUIs();
     }
 
     public void StartGame()
