@@ -216,6 +216,7 @@ MonoBehaviour:
   VirtualCamera: {fileID: 54872229}
   ShipPrefab: {fileID: 114560316838176666, guid: 5e57ffd5a811bfa4aab6e56134026b2b,
     type: 2}
+  BasePrefab: {fileID: 0}
 --- !u!4 &45238930
 Transform:
   m_ObjectHideFlags: 0
@@ -2314,7 +2315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.625, b: 0.625, a: 1}
+  m_Color: {r: 0.5, g: 0.5019608, b: 0.5019608, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

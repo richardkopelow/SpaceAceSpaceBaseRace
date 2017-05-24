@@ -42,6 +42,7 @@ public class PlayerScript : NetworkBehaviour
     public int ComponentIndex = 0;
 
     #region GUI
+    Image background;
     Button readyButton;
     Text readyButtonText;
     Text componentTitle;
@@ -54,20 +55,25 @@ public class PlayerScript : NetworkBehaviour
         {
             Transform playerUIs = GameObject.Find("PlayerUI").GetComponent<Transform>();
             Transform componentPicker = playerUIs.GetChild(0);
+            background = componentPicker.Find("Background").GetComponent<Image>();
+            background.color = Color.gray;
             Button redTeamButton = componentPicker.Find("RedTeamButton").GetComponent<Button>();
             redTeamButton.onClick.AddListener(() => {
                 CmdAssociate(true);
                 Ready = false;
+                background.color = Color.red;
             });
             Button disassociateButton = componentPicker.Find("DisassociateButton").GetComponent<Button>();
             disassociateButton.onClick.AddListener(() => {
                 CmdDisassociate();
                 Ready = false;
+                background.color = Color.gray;
             });
             Button blueTeamButton = componentPicker.Find("BlueTeamButton").GetComponent<Button>();
             blueTeamButton.onClick.AddListener(() => {
                 CmdAssociate(false);
                 Ready = false;
+                background.color = Color.blue;
             });
             readyButton = componentPicker.Find("ReadyButton").GetComponent<Button>();
             readyButtonText = readyButton.GetComponent<Transform>().GetChild(0).GetComponent<Text>();
