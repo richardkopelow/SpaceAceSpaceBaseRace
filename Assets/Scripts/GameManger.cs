@@ -16,7 +16,8 @@ public class GameManger : NetworkBehaviour
     public GameObject ServerUI;
     public GameObject PlayerUI;
     public Text PlayerCountText;
-    public Cinemachine.CinemachineVirtualCamera VirtualCamera;
+    public Cinemachine.CinemachineVirtualCamera BlueVirtualCamera;
+    public Cinemachine.CinemachineVirtualCamera RedVirtualCamera;
     public Ship ShipPrefab;
     public Transform BasePrefab;
 
@@ -160,7 +161,7 @@ public class GameManger : NetworkBehaviour
         //Spawn Ships
         Ship blueShip = Instantiate<Ship>(ShipPrefab);
         Transform blueShipTransform = blueShip.GetComponent<Transform>();
-        VirtualCamera.Follow = blueShipTransform;
+        BlueVirtualCamera.Follow = blueShipTransform;
         blueShipTransform.position = new Vector3(1, 0, 0);
         foreach (PlayerScript player in blueTeam)
         {
@@ -169,7 +170,7 @@ public class GameManger : NetworkBehaviour
 
         Ship redShip = Instantiate<Ship>(ShipPrefab);
         Transform redShipTransform = redShip.GetComponent<Transform>();
-        //VirtualCamera.Follow = redShipTransform;
+        RedVirtualCamera.Follow = redShipTransform;
         redShipTransform.position = new Vector3(-1, 0, 0);
         foreach (PlayerScript player in redTeam)
         {

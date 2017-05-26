@@ -32,7 +32,7 @@ public class PlayerScript : NetworkBehaviour
         set
         {
             _ready = value;
-            readyButtonText.text = _ready ? "Unready" : "Ready";
+            playerUIManager.SetReady(_ready);
             CmdSetReady(_ready);
         }
     }
@@ -41,63 +41,67 @@ public class PlayerScript : NetworkBehaviour
 
     public int ComponentIndex = 0;
 
-    #region GUI
-    Image background;
-    Button readyButton;
-    Text readyButtonText;
-    Text componentTitle;
-    #endregion
+    private PlayerUIManager playerUIManager;
 
     void Start()
     {
         Team = TeamEnum.None;
         if (isLocalPlayer)
         {
-            Transform playerUIs = GameObject.Find("PlayerUI").GetComponent<Transform>();
-            Transform componentPicker = playerUIs.GetChild(0);
-            background = componentPicker.Find("Background").GetComponent<Image>();
-            background.color = Color.gray;
-            Button redTeamButton = componentPicker.Find("RedTeamButton").GetComponent<Button>();
-            redTeamButton.onClick.AddListener(() => {
-                CmdAssociate(true);
-                Ready = false;
-                background.color = Color.red;
-            });
-            Button disassociateButton = componentPicker.Find("DisassociateButton").GetComponent<Button>();
-            disassociateButton.onClick.AddListener(() => {
-                CmdDisassociate();
-                Ready = false;
-                background.color = Color.gray;
-            });
-            Button blueTeamButton = componentPicker.Find("BlueTeamButton").GetComponent<Button>();
-            blueTeamButton.onClick.AddListener(() => {
-                CmdAssociate(false);
-                Ready = false;
-                background.color = Color.blue;
-            });
-            readyButton = componentPicker.Find("ReadyButton").GetComponent<Button>();
-            readyButtonText = readyButton.GetComponent<Transform>().GetChild(0).GetComponent<Text>();
-            componentTitle = componentPicker.Find("ComponentTitle").GetComponent<Text>();
-            readyButton.onClick.AddListener(() =>
-            {
-                Ready = !_ready;
-            });
-            Button previousComponentButton = componentPicker.Find("PreviousComponentButton").GetComponent<Button>();
-            previousComponentButton.onClick.AddListener(() => {
-                CmdChangeComponent(false);
-                Ready = false;
-            });
-            Button nextComponentButton = componentPicker.Find("NextComponentButton").GetComponent<Button>();
-            nextComponentButton.onClick.AddListener(() => {
-                CmdChangeComponent(true);
-                Ready = false;
-            });
+            playerUIManager = GameObject.Find("PlayerUI").GetComponent<PlayerUIManager>();
+
+            playerUIManager.Picker.RedTeamButton.onClick.AddListener(redTeamClick);
+            playerUIManager.Picker.DisassociateButton.onClick.AddListener(disassociateClick);
+            playerUIManager.Picker.BlueTeamButton.onClick.AddListener(blueTeamClick);
+            playerUIManager.Picker.ReadyButton.onClick.AddListener(readyClick);
+            playerUIManager.Picker.PreviousComponentButton.onClick.AddListener(previousComponentClick);
+            playerUIManager.Picker.NextComponentButton.onClick.AddListener(nextComponentClick);
         }
         if (isServer)
         {
             GameManger.Instance.RegisterPlayer(this);
         }
     }
+
+    #region UI Handlers
+    private void redTeamClick()
+    {
+        CmdAssociate(true);
+        Ready = false;
+        playerUIManager.SetTeam(TeamEnum.Red);
+    }
+
+    private void disassociateClick()
+    {
+        CmdDisassociate();
+        Ready = false;
+        playerUIManager.SetTeam(TeamEnum.None);
+    }
+
+    private void blueTeamClick()
+    {
+        CmdAssociate(false);
+        Ready = false;
+        playerUIManager.SetTeam(TeamEnum.Blue);
+    }
+
+    private void readyClick()
+    {
+        Ready = !_ready;
+    }
+
+    private void previousComponentClick()
+    {
+        CmdChangeComponent(false);
+        Ready = false;
+    }
+
+    private void nextComponentClick()
+    {
+        CmdChangeComponent(true);
+        Ready = false;
+    }
+    #endregion
 
     [Command]
     public void CmdButtonDown()
@@ -181,7 +185,18 @@ public class PlayerScript : NetworkBehaviour
     {
         string[] parts = data.Split(',');
         
-        componentTitle.text = parts[0];
-        readyButton.interactable = parts[1] == "1" ? true : false;
+        playerUIManager.Picker.ComponentTitle.text = parts[0];
+        playerUIManager.Picker.ReadyButton.interactable = parts[1] == "1" ? true : false;
+    }
+
+    public void LockUI()
+    {
+        TargetLockUI(connectionToClient);
+    }
+
+    [TargetRpc]
+    private void TargetLockUI(NetworkConnection target)
+    {
+        playerUIManager.LockUI();
     }
 }
