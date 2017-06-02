@@ -49,6 +49,7 @@ public class PlayerScript : NetworkBehaviour
         if (isLocalPlayer)
         {
             playerUIManager = GameObject.Find("PlayerUI").GetComponent<PlayerUIManager>();
+            playerUIManager.Player = this;
 
             playerUIManager.Picker.RedTeamButton.onClick.AddListener(redTeamClick);
             playerUIManager.Picker.DisassociateButton.onClick.AddListener(disassociateClick);
@@ -124,28 +125,7 @@ public class PlayerScript : NetworkBehaviour
     [TargetRpc]
     public void TargetAssignJob(NetworkConnection target, JobsEnum job)
     {
-        Transform playerUIs = GameObject.Find("PlayerUI").GetComponent<Transform>();
-        Transform uiTransform = null;
-        foreach (Transform ui in playerUIs)
-        {
-            if (ui.name == job.ToString())
-            {
-                ui.gameObject.SetActive(true);
-                uiTransform = ui;
-            }
-            else
-            {
-                ui.gameObject.SetActive(false);
-            }
-        }
-        switch (job)
-        {
-            case JobsEnum.Thruster:
-                uiTransform.Find("ThrusterButton").GetComponent<ThrusterButton>().Player = this;
-                break;
-            default:
-                break;
-        }
+        playerUIManager.SetUI(job);
     }
 
     [Command]

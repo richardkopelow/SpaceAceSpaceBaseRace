@@ -1214,6 +1214,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaadaa71877fcc945ac926548d35792f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  Door: {fileID: 1709683587}
   Picker: {fileID: 1054345101}
   ButtonThruster: {fileID: 375527798}
 --- !u!1 &752441808
@@ -1534,7 +1536,7 @@ MonoBehaviour:
   DisassociateButton: {fileID: 1585456000}
   BlueTeamButton: {fileID: 1828012506}
   ReadyButton: {fileID: 1660543988}
-  ReadyButtonText: {fileID: 2018658436}
+  ReadyButtonText: {fileID: 1677934064}
   PreviousComponentButton: {fileID: 627962105}
   NextComponentButton: {fileID: 879637631}
 --- !u!1 &1214164597
@@ -1895,13 +1897,14 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1709683586}
+  - component: {fileID: 1709683587}
   m_Layer: 5
   m_Name: UIDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1709683586
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1922,6 +1925,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1709683587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1709683585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f6f61f491eda44b9689352c1b50a7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Top: {fileID: 687537567}
+  Bottom: {fileID: 124028089}
 --- !u!1 &1728095715
 GameObject:
   m_ObjectHideFlags: 0

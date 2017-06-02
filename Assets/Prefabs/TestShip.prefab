@@ -83,7 +83,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1356442017163982}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -394.21057, y: 61.62703, z: 0}
+  m_LocalPosition: {x: -265.5774, y: -256.54596, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4621381864840028}
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ComponentName: Left Thruster
-  Job: 0
+  Job: 1
   rigid: {fileID: 50517890411716926}
 --- !u!114 &114560316838176666
 MonoBehaviour:
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ComponentName: Right Thruster
-  Job: 0
+  Job: 1
   rigid: {fileID: 50517890411716926}
 --- !u!212 &212197069972754896
 SpriteRenderer:
