@@ -181,4 +181,9 @@ public class GameManger : NetworkBehaviour
         Transform baseTrans = Instantiate<Transform>(BasePrefab);
         baseTrans.position = new Vector3(2, 2, 0);
     }
+
+    public void EndGame()
+    {
+
+    }
 }

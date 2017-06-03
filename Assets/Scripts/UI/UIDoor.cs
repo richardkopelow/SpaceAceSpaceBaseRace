@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UIDoor : MonoBehaviour
 {
+    public bool IsOpen;
     public Transform Top;
     public Transform Bottom;
 
@@ -37,6 +38,8 @@ public class UIDoor : MonoBehaviour
         }
         Top.position = topOriginal;
         Bottom.position = bottomOriginal;
+
+        IsOpen = false;
     }
 
     public Coroutine Open()
@@ -62,5 +65,7 @@ public class UIDoor : MonoBehaviour
         }
         Top.position = topEnd;
         Bottom.position = bottomEnd;
+
+        IsOpen = true;
     }
 }

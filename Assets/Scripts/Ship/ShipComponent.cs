@@ -2,12 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum JobsEnum
-{
-    ComponentPicker,
-    Thruster
-}
-
 public class ShipComponent : MonoBehaviour
 {
     public string ComponentName;

@@ -25,7 +25,7 @@ public class PlayerUIManager : MonoBehaviour
         Picker.ReadyButtonText.text = ready ? "Unready" : "Ready";
     }
 
-    public void SetTeam(PlayerScript.TeamEnum team)
+    public void SetTeam(TeamEnum team)
     {
         Color backgroundColor;
         switch (team)
@@ -50,7 +50,10 @@ public class PlayerUIManager : MonoBehaviour
 
     private IEnumerator setUICoroutine(JobsEnum job)
     {
-        yield return Door.Close();
+        if (Door.IsOpen)
+        {
+            yield return Door.Close();
+        }
         showUI(job);
         yield return Door.Open();
     }

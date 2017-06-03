@@ -7,13 +7,6 @@ using UnityEngine.UI;
 
 public class PlayerScript : NetworkBehaviour
 {
-    public enum TeamEnum
-    {
-        Red,
-        Blue,
-        None
-    }
-
     private ShipComponent _shipComponent;
     public ShipComponent ShipComponent
     {
