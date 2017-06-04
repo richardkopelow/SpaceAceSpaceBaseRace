@@ -12,8 +12,6 @@ public class PlayerUIManager : MonoBehaviour
 
     Transform trans;
 
-    bool lockedUI;
-
     private void Start()
     {
         trans = GetComponent<Transform>();
@@ -30,10 +28,10 @@ public class PlayerUIManager : MonoBehaviour
         Color backgroundColor;
         switch (team)
         {
-            case PlayerScript.TeamEnum.Red:
+            case TeamEnum.Red:
                 backgroundColor = Color.red;
                 break;
-            case PlayerScript.TeamEnum.Blue:
+            case TeamEnum.Blue:
                 backgroundColor = Color.blue;
                 break;
             default:
@@ -88,6 +86,6 @@ public class PlayerUIManager : MonoBehaviour
 
     public void LockUI()
     {
-        lockedUI = true;
+        Door.Close();
     }
 }

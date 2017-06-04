@@ -16,6 +16,7 @@ public class GameManger : NetworkBehaviour
     public GameObject ServerUI;
     public GameObject PlayerUI;
     public Text PlayerCountText;
+    public Text WinnerText;
     public Cinemachine.CinemachineVirtualCamera BlueVirtualCamera;
     public Cinemachine.CinemachineVirtualCamera RedVirtualCamera;
     public Ship ShipPrefab;
@@ -89,7 +90,7 @@ public class GameManger : NetworkBehaviour
     private void UpdatePlayerUI(PlayerScript player)
     {
         string data;
-        if (player.Team == PlayerScript.TeamEnum.None)
+        if (player.Team == TeamEnum.None)
         {
             data = "Disassociated,0";
         }
@@ -103,7 +104,7 @@ public class GameManger : NetworkBehaviour
 
             string component = ShipPrefab.ShipComponents[player.ComponentIndex].ComponentName;
 
-            List<PlayerScript> team = player.Team == PlayerScript.TeamEnum.Red ? redTeam : blueTeam;
+            List<PlayerScript> team = player.Team == TeamEnum.Red ? redTeam : blueTeam;
             bool available = true;
             foreach (PlayerScript other in team)
             {
@@ -182,8 +183,12 @@ public class GameManger : NetworkBehaviour
         baseTrans.position = new Vector3(2, 2, 0);
     }
 
-    public void EndGame()
+    public void EndGame(TeamEnum winningTeam)
     {
-
+        foreach (PlayerScript player in players)
+        {
+            player.LockUI();
+        }
+        WinnerText.text = winningTeam == TeamEnum.Blue ? "The winner is <color=Blue>BLUE</color>" : "The winner is <color=Red>RED</color>";
     }
 }

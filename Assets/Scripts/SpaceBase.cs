@@ -19,7 +19,7 @@ public class SpaceBase : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ship")
         {
-
+            GameManger.Instance.EndGame(collision.gameObject.GetComponent<Ship>().Team);
         }
     }
 }
