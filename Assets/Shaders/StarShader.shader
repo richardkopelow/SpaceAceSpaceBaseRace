@@ -56,7 +56,7 @@
 				{
 					i.uv.y += 1;
 				}
-				fixed4 col = tex2D(_MainTex, i.uv) * abs(tex2D(_FadeMap, i.uv).r - ((_SinTime.w)/2*0.6+0.7) + sin(worldPos.x+_Time.y)/3);
+				fixed4 col = tex2D(_MainTex, i.uv) * abs(tex2D(_FadeMap, i.uv).r - ((_SinTime.w) / 2 * 0.6 + 0.7) + sin(worldPos.x + _Time.y) / 3);
 				return col;
 			}
 			ENDCG

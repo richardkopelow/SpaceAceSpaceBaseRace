@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 using ZXing;
@@ -29,13 +30,17 @@ public class MainMenu : MonoBehaviour
             {
                 IBarcodeReader barcodeReader = new BarcodeReader();
                 // decode the current frame
-                var result = barcodeReader.Decode(camTexture.GetPixels32(), camTexture.width, camTexture.height);
+                Result result = barcodeReader.Decode(camTexture.GetPixels32(), camTexture.width, camTexture.height);
                 if (result != null)
                 {
-                    SpaceRaceNetworkManager.Instance.networkAddress = result.Text;
-                    SpaceRaceNetworkManager.Instance.StartClient();
-                    ResultText.text = result.Text;
-                    camTexture.Stop();
+                    IPAddress piAddress;
+                    if (IPAddress.TryParse(result.Text, out piAddress))
+                    {
+                        SpaceRaceNetworkManager.Instance.networkAddress = result.Text;
+                        SpaceRaceNetworkManager.Instance.StartClient();
+                        ResultText.text = result.Text;
+                        camTexture.Stop();
+                    }
                 }
             }
             catch (Exception ex) { Debug.LogWarning(ex.Message); }
