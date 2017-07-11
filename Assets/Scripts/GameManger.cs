@@ -20,7 +20,8 @@ public class GameManger : NetworkBehaviour
     public Cinemachine.CinemachineVirtualCamera BlueVirtualCamera;
     public Cinemachine.CinemachineVirtualCamera RedVirtualCamera;
     public Ship ShipPrefab;
-    public Transform BasePrefab;
+
+    private LevelGenerator levelGenerator;
 
     private List<PlayerScript> players;
     private List<PlayerScript> readyPlayers;
@@ -45,6 +46,8 @@ public class GameManger : NetworkBehaviour
         redTeam = new List<PlayerScript>();
         blueTeam = new List<PlayerScript>();
         readyPlayers = new List<PlayerScript>();
+
+        levelGenerator = GetComponent<LevelGenerator>();
     }
 
     public void RegisterPlayer(PlayerScript player)
@@ -159,8 +162,10 @@ public class GameManger : NetworkBehaviour
     public void StartGame()
     {
         ServerUI.SetActive(false);
+        #region Player Init
         //Spawn Ships
         Ship blueShip = Instantiate<Ship>(ShipPrefab);
+        blueShip.Team = TeamEnum.Blue;
         Transform blueShipTransform = blueShip.GetComponent<Transform>();
         BlueVirtualCamera.Follow = blueShipTransform;
         blueShipTransform.position = new Vector3(1, 0, 0);
@@ -170,6 +175,7 @@ public class GameManger : NetworkBehaviour
         }
 
         Ship redShip = Instantiate<Ship>(ShipPrefab);
+        redShip.Team = TeamEnum.Red;
         Transform redShipTransform = redShip.GetComponent<Transform>();
         RedVirtualCamera.Follow = redShipTransform;
         redShipTransform.position = new Vector3(-1, 0, 0);
@@ -177,10 +183,9 @@ public class GameManger : NetworkBehaviour
         {
             player.ShipComponent = redShip.ShipComponents[player.ComponentIndex % redShip.ShipComponents.Length];
         }
+        #endregion
 
-        //Spawn Base
-        Transform baseTrans = Instantiate<Transform>(BasePrefab);
-        baseTrans.position = new Vector3(2, 2, 0);
+        levelGenerator.Generate();
     }
 
     public void EndGame(TeamEnum winningTeam)

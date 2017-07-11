@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1165596329719902}
+  m_IsPrefabParent: 1
+--- !u!1 &1165596329719902
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4882879424324450}
+  - component: {fileID: 114001775368856640}
+  - component: {fileID: 114494017239737888}
+  - component: {fileID: 114378398515359408}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4882879424324450
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1165596329719902}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 610, y: 304.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114001775368856640
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1165596329719902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 249
+    i1: 54
+    i2: 48
+    i3: 19
+    i4: 46
+    i5: 56
+    i6: 196
+    i7: 228
+    i8: 233
+    i9: 6
+    i10: 62
+    i11: 102
+    i12: 206
+    i13: 118
+    i14: 85
+    i15: 10
+  m_ServerOnly: 1
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114378398515359408
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1165596329719902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59946be62111ca0469a9050510b5ba0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpaceBase: {fileID: 4801213621556626, guid: 094be2b7fbe960f4db50973542332bad, type: 2}
+  Asteroid: {fileID: 50584650165146480, guid: abfad8695d2fb124583db644d21e10f7, type: 2}
+  MaxRadius: 40
+  MinRadius: 30
+  BufferRadius: 10
+  AstroidDensityMax: 0.04
+  AstroidDensityMin: 0.02
+--- !u!114 &114494017239737888
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1165596329719902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5847b38ad1217454394db6b422379a64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ServerUI: {fileID: 0}
+  PlayerUI: {fileID: 0}
+  PlayerCountText: {fileID: 0}
+  WinnerText: {fileID: 0}
+  BlueVirtualCamera: {fileID: 0}
+  RedVirtualCamera: {fileID: 0}
+  ShipPrefab: {fileID: 114918798543354284, guid: 843a48dc6182a07489df7e834a96445d,
+    type: 2}
