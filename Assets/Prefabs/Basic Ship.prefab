@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 60316391651703838}
   m_Layer: 0
   m_Name: Basic Ship
-  m_TagString: Untagged
+  m_TagString: Ship
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 60117397931291636}
   m_Layer: 0
   m_Name: LeftThruster
-  m_TagString: Untagged
+  m_TagString: Ship
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 60178368782476610}
   m_Layer: 0
   m_Name: RightThruster
-  m_TagString: Untagged
+  m_TagString: Ship
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -583,6 +583,8 @@ SpriteRenderer:
   m_Size: {x: 2.86, y: 6.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
 --- !u!212 &212587199058051564
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -623,6 +625,8 @@ SpriteRenderer:
   m_Size: {x: 0.976, y: 1.27}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
 --- !u!212 &212987284550306202
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -663,3 +667,5 @@ SpriteRenderer:
   m_Size: {x: 0.976, y: 1.27}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0

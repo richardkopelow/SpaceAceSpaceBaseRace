@@ -29,7 +29,7 @@ public class LevelGenerator : MonoBehaviour
         {
             float scale = 1 + Random.Range(-0.3f, 0.3f);
             Rigidbody2D asteroid = Instantiate<Rigidbody2D>(Asteroid);
-            Asteroid.GetComponent<Transform>().localScale = new Vector3(scale, scale, 1);
+            asteroid.GetComponent<Transform>().localScale = new Vector3(scale, scale, 1);
             float astAngle = Random.Range(0f, 2*Mathf.PI);
             float astRadius = Random.Range(BufferRadius, MaxRadius);
             asteroid.position = new Vector3(Mathf.Cos(astAngle), Mathf.Sin(astAngle)) * astRadius;
