@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System;
@@ -58,8 +58,8 @@ namespace Cinemachine.Blackboard.Editor
                     EditorGUILayout.Space();
 
                     // Get the field display name
-                    int index = Array.FindIndex(mFieldNames, 
-                        (match) => match == Target.m_TargetMappings[selectedMapping].m_Field);
+                    int index = Array.FindIndex(mFieldNames,
+                            (match) => match == Target.m_TargetMappings[selectedMapping].m_Field);
                     string fieldName = index >= 0 ? mFieldDisplayNames[index] : "(unknown field)";
 
                     string helpText = fieldName + "\nwill be ";
@@ -94,12 +94,12 @@ namespace Cinemachine.Blackboard.Editor
             List<string> fieldNames = new List<string>();
             List<string> fieldDisplayNames = new List<string>();
             Reactor.GameObjectFieldScanner scanner = new Reactor.GameObjectFieldScanner();
-            scanner.OnLeafField = (fullName, fieldInfo, rootFieldOwner, value) => 
-            { 
-                fieldNames.Add(fullName);
-                fieldDisplayNames.Add(NicifyName(fullName));
-                return true; // keep going
-            };
+            scanner.OnLeafField = (fullName, fieldInfo, rootFieldOwner, value) =>
+                {
+                    fieldNames.Add(fullName);
+                    fieldDisplayNames.Add(NicifyName(fullName));
+                    return true; // keep going
+                };
             scanner.ScanFields(Target.gameObject);
             mFieldNames = fieldNames.ToArray();
             mFieldDisplayNames = fieldDisplayNames.ToArray();
@@ -131,9 +131,9 @@ namespace Cinemachine.Blackboard.Editor
         void SetupMappingList()
         {
             mMappingList = new UnityEditorInternal.ReorderableList(
-                serializedObject, 
-                serializedObject.FindProperty(()=>Target.m_TargetMappings), 
-               true, true, true, true);
+                    serializedObject,
+                    serializedObject.FindProperty(() => Target.m_TargetMappings),
+                    true, true, true, true);
 
             // Needed for accessing field names as strings
             Reactor.TargetModifier def = new Reactor.TargetModifier();
@@ -141,48 +141,48 @@ namespace Cinemachine.Blackboard.Editor
             float vSpace = 2;
             float hSpace = 3;
             float opFieldWidth = EditorGUIUtility.singleLineHeight * 4f;
-            mMappingList.drawHeaderCallback = (Rect rect) => 
-            {  
-                rect.position += new Vector2(EditorGUIUtility.singleLineHeight, 0);
-                rect.width -= opFieldWidth + hSpace + EditorGUIUtility.singleLineHeight;
-                EditorGUI.LabelField(rect, "Target Field");
+            mMappingList.drawHeaderCallback = (Rect rect) =>
+                {
+                    rect.position += new Vector2(EditorGUIUtility.singleLineHeight, 0);
+                    rect.width -= opFieldWidth + hSpace + EditorGUIUtility.singleLineHeight;
+                    EditorGUI.LabelField(rect, "Target Field");
 
-                rect.position += new Vector2(rect.width + hSpace, 0);
-                rect.width = opFieldWidth;
-                EditorGUI.LabelField(rect, "Operation");
-            };
+                    rect.position += new Vector2(rect.width + hSpace, 0);
+                    rect.width = opFieldWidth;
+                    EditorGUI.LabelField(rect, "Operation");
+                };
 
-            mMappingList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => 
-            {
-                SerializedProperty element 
-                    = mMappingList.serializedProperty.GetArrayElementAtIndex(index);
+            mMappingList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+                {
+                    SerializedProperty element
+                        = mMappingList.serializedProperty.GetArrayElementAtIndex(index);
 
-                rect.y += vSpace; 
-                rect.height = EditorGUIUtility.singleLineHeight;
-                
-                Rect r = rect;
-                r.width -= opFieldWidth + hSpace;
-                SerializedProperty field = element.FindPropertyRelative(()=>def.m_Field);
-                int currentField = Array.FindIndex(mFieldNames, match => match == field.stringValue);
-                int fieldSelection = EditorGUI.Popup(r, currentField, mFieldDisplayNames);
-                if (currentField != fieldSelection)
-                    field.stringValue = (fieldSelection < 0) ? "" : mFieldNames[fieldSelection];
+                    rect.y += vSpace;
+                    rect.height = EditorGUIUtility.singleLineHeight;
 
-                r.position += new Vector2(r.width + hSpace, 0);
-                r.width = opFieldWidth;
-                EditorGUI.PropertyField(r, element.FindPropertyRelative(()=>def.m_Operation), GUIContent.none);
-            };
+                    Rect r = rect;
+                    r.width -= opFieldWidth + hSpace;
+                    SerializedProperty field = element.FindPropertyRelative(() => def.m_Field);
+                    int currentField = Array.FindIndex(mFieldNames, match => match == field.stringValue);
+                    int fieldSelection = EditorGUI.Popup(r, currentField, mFieldDisplayNames);
+                    if (currentField != fieldSelection)
+                        field.stringValue = (fieldSelection < 0) ? "" : mFieldNames[fieldSelection];
+
+                    r.position += new Vector2(r.width + hSpace, 0);
+                    r.width = opFieldWidth;
+                    EditorGUI.PropertyField(r, element.FindPropertyRelative(() => def.m_Operation), GUIContent.none);
+                };
         }
 
         void SetupExpressionList(int selectedMapping)
         {
-            SerializedProperty mappingsProp = serializedObject.FindProperty(()=>Target.m_TargetMappings);
+            SerializedProperty mappingsProp = serializedObject.FindProperty(() => Target.m_TargetMappings);
             SerializedProperty selectedMappingProp = mappingsProp.GetArrayElementAtIndex(selectedMapping);
             SerializedProperty expressionProp = selectedMappingProp.FindPropertyRelative("m_Expression");
             SerializedProperty expressionListProp = expressionProp.FindPropertyRelative("m_Lines");
 
             mExpressionList = new UnityEditorInternal.ReorderableList(
-                serializedObject, expressionListProp, true, true, true, true);
+                    serializedObject, expressionListProp, true, true, true, true);
 
             // Needed for accessing field names as strings
             Reactor.BlackboardExpression.Line def = new Reactor.BlackboardExpression.Line();
@@ -190,68 +190,68 @@ namespace Cinemachine.Blackboard.Editor
             float vSpace = 2;
             float hSpace = 3;
             float opFieldWidth = EditorGUIUtility.singleLineHeight * 4f;
-            mExpressionList.drawHeaderCallback = (Rect rect) => 
-            { 
-                rect.position += new Vector2(EditorGUIUtility.singleLineHeight, 0);
-                rect.width -= EditorGUIUtility.singleLineHeight;
+            mExpressionList.drawHeaderCallback = (Rect rect) =>
+                {
+                    rect.position += new Vector2(EditorGUIUtility.singleLineHeight, 0);
+                    rect.width -= EditorGUIUtility.singleLineHeight;
 
-                Rect r = rect;
-                r.width = opFieldWidth;
-                EditorGUI.LabelField(r, "Operation");
-                
-                r.position += new Vector2(r.width + hSpace, 0);
-                r.width = (rect.width - (r.width + hSpace*2)) / 2;
-                EditorGUI.LabelField(r, "Blackboard Key");
+                    Rect r = rect;
+                    r.width = opFieldWidth;
+                    EditorGUI.LabelField(r, "Operation");
 
-                r.position += new Vector2(r.width + hSpace, 0);
-                EditorGUI.LabelField(r, "Remap Curve");
-            };
+                    r.position += new Vector2(r.width + hSpace, 0);
+                    r.width = (rect.width - (r.width + hSpace * 2)) / 2;
+                    EditorGUI.LabelField(r, "Blackboard Key");
 
-            mExpressionList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => 
-            {
-                SerializedProperty element = mExpressionList.serializedProperty.GetArrayElementAtIndex(index);
+                    r.position += new Vector2(r.width + hSpace, 0);
+                    EditorGUI.LabelField(r, "Remap Curve");
+                };
 
-                rect.y += vSpace; 
-                rect.height = EditorGUIUtility.singleLineHeight;
+            mExpressionList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+                {
+                    SerializedProperty element = mExpressionList.serializedProperty.GetArrayElementAtIndex(index);
 
-                Rect r = rect;
-                r.width = opFieldWidth;
-                if (index == 0)
-                    EditorGUI.LabelField(r, "Start with");
-                else
-                    EditorGUI.PropertyField(r, element.FindPropertyRelative(()=>def.m_Operation), GUIContent.none);
-                
-                r.position += new Vector2(r.width + hSpace, 0);
-                r.width = (rect.width - (r.width + hSpace*2)) / 2;
-                EditorGUI.PropertyField(r, element.FindPropertyRelative(()=>def.m_BlackboardKey), GUIContent.none);
+                    rect.y += vSpace;
+                    rect.height = EditorGUIUtility.singleLineHeight;
 
-                r.position += new Vector2(r.width + hSpace, 0);
-                EditorGUI.PropertyField(new Rect(r.position, new Vector2(rect.height, rect.height)), 
-                    element.FindPropertyRelative(()=>def.m_Remap), GUIContent.none);
+                    Rect r = rect;
+                    r.width = opFieldWidth;
+                    if (index == 0)
+                        EditorGUI.LabelField(r, "Start with");
+                    else
+                        EditorGUI.PropertyField(r, element.FindPropertyRelative(() => def.m_Operation), GUIContent.none);
 
-                GUI.enabled = element.FindPropertyRelative(()=>def.m_Remap).boolValue;
-                r.position += new Vector2(rect.height, 0); r.width -= rect.height;
-                EditorGUI.PropertyField(r, element.FindPropertyRelative(()=>def.m_RemapCurve), GUIContent.none);
-                GUI.enabled = true;
-            };
+                    r.position += new Vector2(r.width + hSpace, 0);
+                    r.width = (rect.width - (r.width + hSpace * 2)) / 2;
+                    EditorGUI.PropertyField(r, element.FindPropertyRelative(() => def.m_BlackboardKey), GUIContent.none);
+
+                    r.position += new Vector2(r.width + hSpace, 0);
+                    EditorGUI.PropertyField(new Rect(r.position, new Vector2(rect.height, rect.height)),
+                        element.FindPropertyRelative(() => def.m_Remap), GUIContent.none);
+
+                    GUI.enabled = element.FindPropertyRelative(() => def.m_Remap).boolValue;
+                    r.position += new Vector2(rect.height, 0); r.width -= rect.height;
+                    EditorGUI.PropertyField(r, element.FindPropertyRelative(() => def.m_RemapCurve), GUIContent.none);
+                    GUI.enabled = true;
+                };
         }
 
         /// <summary>
-        /// Register with the SaveDuringPlay mechanism for hot-saving tweaks made during play-mode
+        /// Register a callback with the SaveDuringPlay mechanism to call before hot-saving
+        /// tweaks made during play-mode
         /// </summary>
         [InitializeOnLoad]
-        class RegisterHotSave 
-        { 
-            static RegisterHotSave() 
-            { 
-                SaveDuringPlay.SaveDuringPlay.RegisterBehaviourTypeForHotSaving(typeof(Reactor)); 
+        class RegisterHotSave
+        {
+            static RegisterHotSave()
+            {
                 SaveDuringPlay.SaveDuringPlay.OnHotSave = OnHotSave;
             }
 
             // Before hot-save, we must restore all initial values touched by reactors
             static void OnHotSave()
             {
-                Reactor[] reactors = UnityEngine.Object.FindObjectsOfType<Reactor>();
+                Reactor[] reactors = SaveDuringPlay.ObjectTreeUtil.FindAllBehavioursInScene<Reactor>();
                 if (reactors != null)
                     foreach (var r in reactors)
                         if (r != null)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEditor;
 
@@ -69,7 +69,7 @@ namespace Cinemachine.GameRig
             }
         }
 
-        private const string kColliderSettingsFoldoutKey= "CNMCN_Collider_Foldout";
+        private const string kColliderSettingsFoldoutKey = "CNMCN_Collider_Foldout";
         private const string kFeelerActiveColourKey     = "CNMCN_Collider_Feeler_Active_Colour";
         private const string kFeelerInactiveColourKey   = "CNMCN_Collider_Feeler_Inactive_Colour";
         private const string kFeelerHitColourKey        = "CNMCN_Collider_Feeler_Hit_Colour";

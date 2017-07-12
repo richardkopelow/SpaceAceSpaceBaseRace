@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System;
 
@@ -18,7 +18,7 @@ namespace Cinemachine.Editor
             m_Owner = owner;
             m_DoVersionControlChecks = UnityEditor.VersionControl.Provider.isActive;
             m_CreateButtonGUIContent = new GUIContent(
-                "Create Asset", "Create a new shared settings asset");
+                    "Create Asset", "Create a new shared settings asset");
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Cinemachine.Editor
             DestroyEditor();
             m_Owner = null;
         }
-        
+
         /// <summary>
         /// Customize this after creation if you want
         /// </summary>
@@ -80,16 +80,20 @@ namespace Cinemachine.Editor
                 }
                 if (m_Editor != null)
                 {
-                    property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, GUIContent.none);
+                    int indentOffset = 6;
+                    Rect foldoutRect = new Rect(
+                        rect.x - indentOffset, rect.y, rect.width + indentOffset, rect.height);
+                    property.isExpanded = EditorGUI.Foldout(
+                        foldoutRect, property.isExpanded, GUIContent.none);
 
-                    UnityEditor.VersionControl.Asset targetAsset 
+                    UnityEditor.VersionControl.Asset targetAsset
                         = UnityEditor.VersionControl.Provider.GetAssetByPath(
-                            AssetDatabase.GetAssetPath(m_Editor.target));
-                    bool isLockedFile = m_DoVersionControlChecks 
-                        && !targetAsset.IsOneOfStates(new [] { 
-                            UnityEditor.VersionControl.Asset.States.CheckedOutLocal,
-                            UnityEditor.VersionControl.Asset.States.AddedLocal,
-                        });
+                                AssetDatabase.GetAssetPath(m_Editor.target));
+                    bool isLockedFile = m_DoVersionControlChecks
+                        && !targetAsset.IsOneOfStates(new[] {
+                        UnityEditor.VersionControl.Asset.States.CheckedOutLocal,
+                        UnityEditor.VersionControl.Asset.States.AddedLocal,
+                    });
 
                     GUI.enabled = !isLockedFile;
                     if (property.isExpanded)
@@ -122,12 +126,12 @@ namespace Cinemachine.Editor
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(property);
-            if (GUILayout.Button(m_CreateButtonGUIContent, 
-                GUILayout.ExpandWidth(false), 
-                GUILayout.MaxHeight(EditorGUIUtility.singleLineHeight)))
+            if (GUILayout.Button(m_CreateButtonGUIContent,
+                    GUILayout.ExpandWidth(false),
+                    GUILayout.MaxHeight(EditorGUIUtility.singleLineHeight)))
             {
                 string newAssetPath = EditorUtility.SaveFilePanelInProject(
-                    title, defaultName, extension, message);
+                        title, defaultName, extension, message);
                 if (!string.IsNullOrEmpty(newAssetPath))
                 {
                     T asset = ScriptableObjectUtility.CreateAt<T>(newAssetPath);

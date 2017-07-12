@@ -3,20 +3,22 @@ using UnityEditor;
 using System;
 using System.Collections.Generic;
 using Cinemachine.Utility;
+using System.Reflection;
 
 namespace Cinemachine.Editor
 {
     /// <summary>
-    /// Base class for virtual camera editors.  
+    /// Base class for virtual camera editors.
     /// Handles drawing the header and the basic properties.
     /// </summary>
     public class CinemachineVirtualCameraBaseEditor : UnityEditor.Editor
     {
         private CinemachineVirtualCameraBase Target { get { return target as CinemachineVirtualCameraBase; } }
 
-        protected virtual string[] GetExcludedPropertiesInInspector()
+        protected virtual List<string> GetExcludedPropertiesInInspector()
         {
-            return Target.m_ExcludedPropertiesInInspector;
+            return Target.m_ExcludedPropertiesInInspector == null
+                ? new List<string>() : new List<string>(Target.m_ExcludedPropertiesInInspector);
         }
 
         protected virtual void OnEnable()
@@ -24,7 +26,7 @@ namespace Cinemachine.Editor
         }
 
         protected virtual void OnDisable()
-        {   
+        {
             if (CinemachineBrain.SoloCamera == (ICinemachineCamera)Target)
             {
                 CinemachineBrain.SoloCamera = null;
@@ -45,11 +47,11 @@ namespace Cinemachine.Editor
                 Color color = GUI.color;
                 bool isSolo = (CinemachineBrain.SoloCamera == (ICinemachineCamera)Target);
                 if (isSolo)
-                     GUI.color = CinemachineBrain.GetSoloGUIColor();
+                    GUI.color = CinemachineBrain.GetSoloGUIColor();
 
                 bool isLive = CinemachineCore.Instance.IsLive(Target);
                 GUI.enabled = isLive;
-                GUI.Label(rectLabel, isLive ? "Status: Live" 
+                GUI.Label(rectLabel, isLive ? "Status: Live"
                     : (Target.isActiveAndEnabled ? "Status: Standby" : "Status: Disabled"));
                 GUI.enabled = true;
                 if (GUI.Button(rect, "Solo", "Button"))
@@ -62,62 +64,35 @@ namespace Cinemachine.Editor
                 if (isSolo)
                     UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
             }
-            string[] excluded = GetExcludedPropertiesInInspector();
-            if (excluded == null)
-                base.OnInspectorGUI();
-            else
-            {
-                serializedObject.Update();
-                DrawPropertiesExcluding(serializedObject, excluded);
-                serializedObject.ApplyModifiedProperties();
-            }
+            List<string> excluded = GetExcludedPropertiesInInspector();
+            serializedObject.Update();
+            DrawPropertiesExcluding(serializedObject, excluded.ToArray());
+            serializedObject.ApplyModifiedProperties();
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.InSelectionHierarchy | GizmoType.Pickable, typeof(CinemachineVirtualCameraBase))]
-        internal static void DrawVirtualCameraGizmos(CinemachineVirtualCameraBase vcam, GizmoType selectionType)
+        internal static void DrawVirtualCameraBaseGizmos(CinemachineVirtualCameraBase vcam, GizmoType selectionType)
         {
             // Don't draw gizmos on hidden stuff
             if ((vcam.VirtualCameraGameObject.hideFlags & (HideFlags.HideInHierarchy | HideFlags.HideInInspector)) != 0)
                 return;
 
-            Color originalGizmoColour = Gizmos.color;
-            Gizmos.color = CinemachineCore.Instance.IsLive(vcam)
-                ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour 
-                : CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour;
-
             CameraState state = vcam.State;
             Gizmos.DrawIcon(state.FinalPosition, "Cinemachine/cm_logo_lg.png", true);
 
-            float aspect = 1;
-            CinemachineBrain brain = CinemachineCore.Instance.FindPotentialTargetBrain(vcam);
-            if (brain != null)
-                aspect = brain.OutputCamera.aspect;
-
-            Matrix4x4 originalMatrix = Gizmos.matrix;
-            Gizmos.matrix = Matrix4x4.TRS(
-                state.FinalPosition, 
-                UnityQuaternionExtensions.Normalized(state.FinalOrientation), Vector3.one);
-            Gizmos.DrawFrustum(
-                Vector3.zero, state.Lens.FieldOfView, 
-                state.Lens.FarClipPlane, state.Lens.NearClipPlane, aspect);
-            Gizmos.matrix = originalMatrix;
-            Gizmos.color = originalGizmoColour;
-        }
-
-        /// <summary>
-        /// Register with the SaveDuringPlay mechanism for hot-saving tweaks made during play-mode
-        /// </summary>
-        [InitializeOnLoad]
-        class RegisterHotSave 
-        { 
-            static RegisterHotSave() 
-            { 
-                SaveDuringPlay.SaveDuringPlay.RegisterBehaviourTypeForHotSaving(typeof(CinemachineVirtualCameraBase)); 
-            }
+            CinemachineBrainEditor.DrawCameraFrustumGizmo(
+                CinemachineCore.Instance.FindPotentialTargetBrain(vcam),
+                state.Lens,
+                Matrix4x4.TRS(
+                    state.FinalPosition,
+                    UnityQuaternionExtensions.Normalized(state.FinalOrientation), Vector3.one),
+                CinemachineCore.Instance.IsLive(vcam)
+                    ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour
+                    : CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour);
         }
     }
 
-   
+
     [CustomEditor(typeof(CinemachineVirtualCamera))]
     internal sealed class CinemachineVirtualCameraEditor : CinemachineVirtualCameraBaseEditor
     {
@@ -126,7 +101,7 @@ namespace Cinemachine.Editor
         // Static state and caches - Call UpdateStaticData() to refresh this
         struct StageData
         {
-            public bool isExpanded;    
+            public bool isExpanded;
             public Type[] types;   // first entry is null
             public string[] PopupOptions;
         }
@@ -145,7 +120,7 @@ namespace Cinemachine.Editor
         }
 
         protected override void OnDisable()
-        {   
+        {
             base.OnDisable();
             // Must destroy editors or we get exceptions
             if (m_componentEditors != null)
@@ -179,7 +154,7 @@ namespace Cinemachine.Editor
             UpdateInstanceData();
 
             // Here are the pipeline stages
-            CinemachineCore.Stage[] sections = new CinemachineCore.Stage[] 
+            CinemachineCore.Stage[] sections = new CinemachineCore.Stage[]
             {
                 CinemachineCore.Stage.Lens,
                 CinemachineCore.Stage.Aim,
@@ -195,15 +170,17 @@ namespace Cinemachine.Editor
                 if (sStageData[index].PopupOptions.Length <= 1)
                     continue;
 
-                EditorGUILayout.BeginVertical(GUI.skin.box);
+                GUIStyle stageBoxStyle = GUI.skin.box;
+                stageBoxStyle.margin.left = 16;
+                EditorGUILayout.BeginVertical(stageBoxStyle);
 
                 Rect rect = EditorGUILayout.GetControlRect(true);
                 rect.height = EditorGUIUtility.singleLineHeight;
 
                 GUI.enabled = !StageIsLocked(stage);
-                int newSelection = EditorGUI.Popup(rect, 
-                    NicifyName(stage.ToString()), m_stageState[index], 
-                    sStageData[index].PopupOptions); 
+                int newSelection = EditorGUI.Popup(rect,
+                        NicifyName(stage.ToString()), m_stageState[index],
+                        sStageData[index].PopupOptions);
                 GUI.enabled = true;
                 Type type = sStageData[index].types[newSelection];
                 if (newSelection != m_stageState[index])
@@ -216,8 +193,11 @@ namespace Cinemachine.Editor
                 }
                 if (type != null)
                 {
+                    int indentOffset = 6;
+                    Rect stageRect = new Rect(
+                        rect.x - indentOffset, rect.y, rect.width + indentOffset, rect.height);
                     sStageData[index].isExpanded = EditorGUI.Foldout(
-                        rect, sStageData[index].isExpanded, GUIContent.none);
+                            stageRect, sStageData[index].isExpanded, GUIContent.none);
                     if (sStageData[index].isExpanded)
                     {
                         // Make the editor for that stage
@@ -240,7 +220,7 @@ namespace Cinemachine.Editor
         {
             CinemachineCore.Stage[] locked = Target.m_LockStageInInspector;
             if (locked != null)
-                for (int i = 0; i < locked.Length; ++ i)
+                for (int i = 0; i < locked.Length; ++i)
                     if (locked[i] == stage)
                         return true;
             return false;
@@ -264,43 +244,43 @@ namespace Cinemachine.Editor
         /// Register with CinemachineVirtualCamera to create the pipeline in an undo-friendly manner
         /// </summary>
         [InitializeOnLoad]
-        class CreatePipelineWithUndo 
-        { 
-            static CreatePipelineWithUndo() 
-            { 
-                CinemachineVirtualCamera.CreatePipelineOverride = 
+        class CreatePipelineWithUndo
+        {
+            static CreatePipelineWithUndo()
+            {
+                CinemachineVirtualCamera.CreatePipelineOverride =
                     (CinemachineVirtualCamera vcam, string name, ICinemachineComponent[] copyFrom) =>
-                {
-                    // Delete all existing pipeline childen
-                    List<Transform> list = new List<Transform>();
-                    foreach (Transform child in vcam.transform) 
-                        if (child.GetComponent<CinemachinePipeline>() != null || child.gameObject.name == name)
-                            list.Add(child);
-                    foreach (Transform child in list)
-                        Undo.DestroyObjectImmediate(child.gameObject);
-
-                    // Create a new pipeline
-                    GameObject go =  new GameObject(name);
-                    Undo.RegisterCreatedObjectUndo(go, "created pipeline");
-                    Undo.SetTransformParent(go.transform, vcam.transform, "parenting pipeline");
-                    Undo.AddComponent<CinemachinePipeline>(go);
-
-                    // If copying, transfer the components
-                    if (copyFrom != null)
                     {
-                        foreach (Component c in copyFrom)
+                        // Delete all existing pipeline childen
+                        List<Transform> list = new List<Transform>();
+                        foreach (Transform child in vcam.transform)
+                            if (child.GetComponent<CinemachinePipeline>() != null || child.gameObject.name == name)
+                                list.Add(child);
+                        foreach (Transform child in list)
+                            Undo.DestroyObjectImmediate(child.gameObject);
+
+                        // Create a new pipeline
+                        GameObject go =  new GameObject(name);
+                        Undo.RegisterCreatedObjectUndo(go, "created pipeline");
+                        Undo.SetTransformParent(go.transform, vcam.transform, "parenting pipeline");
+                        Undo.AddComponent<CinemachinePipeline>(go);
+
+                        // If copying, transfer the components
+                        if (copyFrom != null)
                         {
-                            Component copy = Undo.AddComponent(go, c.GetType());
-                            Undo.RecordObject(copy, "copying pipeline");
-                            ReflectionHelpers.CopyFields(c, copy);
+                            foreach (Component c in copyFrom)
+                            {
+                                Component copy = Undo.AddComponent(go, c.GetType());
+                                Undo.RecordObject(copy, "copying pipeline");
+                                ReflectionHelpers.CopyFields(c, copy);
+                            }
                         }
-                    }
-                    return go.transform;
-                };
+                        return go.transform;
+                    };
                 CinemachineVirtualCamera.DestroyPipelineOverride = (GameObject pipeline) =>
-                {
-                    Undo.DestroyObjectImmediate(pipeline);
-                };
+                    {
+                        Undo.DestroyObjectImmediate(pipeline);
+                    };
             }
         }
 
@@ -323,7 +303,7 @@ namespace Cinemachine.Editor
                     break;
 
             // Remove the existing components at that stage
-            for (int i = numComponents-1; i >= 0; --i)
+            for (int i = numComponents - 1; i >= 0; --i)
             {
                 if (components[i].Stage == stage)
                 {
@@ -355,12 +335,12 @@ namespace Cinemachine.Editor
             var stageTypes = new List<Type>[System.Enum.GetValues(typeof(CinemachineCore.Stage)).Length];
             for (int i = 0; i < stageTypes.Length; ++i)
                 stageTypes[i] = new List<Type>();
-                
+
             // Get all ICinemachineComponents
-            var allTypes 
+            var allTypes
                 = Cinemachine.Utility.ReflectionHelpers.GetTypesInAllLoadedAssemblies(
-                    (Type t) => Array.Exists(t.GetInterfaces(), 
-                        (i) => i == typeof(ICinemachineComponent)));
+                        (Type t) => Array.Exists(t.GetInterfaces(),
+                            (i) => i == typeof(ICinemachineComponent)));
 
             // Create a temp game object so we can instance behaviours
             GameObject go = new GameObject("Cinemachine Temp Object");
@@ -387,12 +367,12 @@ namespace Cinemachine.Editor
                 {
                     if (n == 0)
                     {
-                        bool useSimple 
-                             = (i == (int)CinemachineCore.Stage.Aim) 
-                            || (i == (int)CinemachineCore.Stage.Body);
+                        bool useSimple
+                            = (i == (int)CinemachineCore.Stage.Aim)
+                                || (i == (int)CinemachineCore.Stage.Body);
                         names[n] = (useSimple) ? "Hard constraint" : "none";
                     }
-                    else 
+                    else
                         names[n] = NicifyName(sStageData[i].types[n].Name);
                 }
                 sStageData[i].PopupOptions = names;
@@ -460,10 +440,60 @@ namespace Cinemachine.Editor
             {
                 CinemachineCore.Stage stage = c.Stage;
                 int index = 0;
-                for (index = sStageData[(int)stage].types.Length-1; index > 0; --index)
+                for (index = sStageData[(int)stage].types.Length - 1; index > 0; --index)
                     if (sStageData[(int)stage].types[index] == c.GetType())
                         break;
                 m_stageState[(int)stage] = index;
+            }
+        }
+
+        // Because the cinemachine components are attached to hidden objects, their
+        // gizmos don't get drawn by default.  We have to do it explicitly.
+        [InitializeOnLoad]
+        static class CollectGizmoDrawers
+        {
+            static CollectGizmoDrawers()
+            {
+                m_GizmoDrawers = new Dictionary<Type, MethodInfo>();
+                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (Assembly assembly in assemblies)
+                {
+                    foreach (var type in assembly.GetTypes())
+                    {
+                        bool added = false;
+                        foreach (var method in type.GetMethods(
+                                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+                        {
+                            if (added)
+                                break;
+                            if (!method.IsStatic)
+                                continue;
+                            var attributes = method.GetCustomAttributes(typeof(DrawGizmo), true) as DrawGizmo[];
+                            foreach (var a in attributes)
+                            {
+                                if (typeof(ICinemachineComponent).IsAssignableFrom(a.drawnType))
+                                {
+                                    m_GizmoDrawers.Add(a.drawnType, method);
+                                    added = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            public static Dictionary<Type, MethodInfo> m_GizmoDrawers;
+        }
+
+        [DrawGizmo(GizmoType.Active | GizmoType.InSelectionHierarchy, typeof(CinemachineVirtualCamera))]
+        internal static void DrawVirtualCameraGizmos(CinemachineVirtualCamera vcam, GizmoType selectionType)
+        {
+            var pipeline = vcam.GetComponentPipeline();
+            foreach (var c in pipeline)
+            {
+                MethodInfo method;
+                if (CollectGizmoDrawers.m_GizmoDrawers.TryGetValue(c.GetType(), out method))
+                    method.Invoke(null, new object[] { c, selectionType });
             }
         }
     }

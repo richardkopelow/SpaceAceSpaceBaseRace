@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Cinemachine.Blackboard
 {
     /// <summary>
     /// A lightweight string to float blackboard to use in Cinemachine Reactor and other places
     /// </summary>
+    [DocumentationSorting(300, DocumentationSortingAttribute.Level.UserRef)]
     public class Blackboard
     {
         /// <summary>
-        /// The globally accessible blackboard used by <see cref="Reactor"/>
+        /// The globally accessible blackboard used by Reactor
         /// </summary>
         public static readonly Blackboard CinemachineBlackboard = new Blackboard("Cinemachine");
 

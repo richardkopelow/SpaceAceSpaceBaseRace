@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 namespace Cinemachine.Editor
@@ -17,19 +17,19 @@ namespace Cinemachine.Editor
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.Selected, typeof(CinemachineTransposer))]
-        private static void DrawTransposerGizmos(CinemachineTransposer target, GizmoType selectionType)
+        static void DrawTransposerGizmos(CinemachineTransposer target, GizmoType selectionType)
         {
             if (target.IsValid)
             {
                 Color originalGizmoColour = Gizmos.color;
                 Gizmos.color = CinemachineCore.Instance.IsLive(target.VirtualCamera)
-                    ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour 
+                    ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour
                     : CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour;
 
                 Vector3 targetPos = target.VirtualCamera.Follow.position;
                 Vector3 desiredPos = target.GetDesiredTargetPosition();
                 Gizmos.DrawLine(targetPos, desiredPos);
-                Gizmos.DrawWireSphere(desiredPos, 
+                Gizmos.DrawWireSphere(desiredPos,
                     HandleUtility.GetHandleSize(desiredPos) / 20);
             }
         }

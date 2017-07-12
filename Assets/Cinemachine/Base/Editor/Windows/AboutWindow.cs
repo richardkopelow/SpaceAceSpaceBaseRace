@@ -1,24 +1,15 @@
-﻿
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.AnimatedValues;
 
 namespace Cinemachine.Editor
 {
     [InitializeOnLoad]
     public class AboutWindow : EditorWindow
     {
-        //private const string kShowOnStartupKey = "CNMCN_Show_About_On_Start";
         private const string kLastVersionOpened = "CNMCN_Last_Version_Loaded";
         private const string kInvalidVersionNumber = "0.0";
 
         private static readonly Vector2 kMinWindowSize = new Vector2(550f, 550f);
-
-        //private static bool ShowOnStart
-        //{
-        //    get { return EditorPrefs.GetBool(kShowOnStartupKey, true); }
-        //    set { EditorPrefs.SetBool(kShowOnStartupKey, value); }
-        //}
 
         private static string LastVersionLoaded
         {
@@ -63,7 +54,7 @@ namespace Cinemachine.Editor
                 {
                     float headerWidth = position.width;
                     float aspectRatio = (float)CinemachineSettings.CinemachineHeader.height / (float)CinemachineSettings.CinemachineHeader.width;
-                    GUILayout.BeginScrollView(Vector2.zero, false, false, GUILayout.Width(headerWidth), GUILayout.Height(headerWidth*aspectRatio));
+                    GUILayout.BeginScrollView(Vector2.zero, false, false, GUILayout.Width(headerWidth), GUILayout.Height(headerWidth * aspectRatio));
                     Rect texRect = new Rect(0f, 0f, headerWidth, headerWidth * aspectRatio);
 
                     GUILayout.FlexibleSpace();
@@ -77,18 +68,7 @@ namespace Cinemachine.Editor
 
                 EditorGUILayout.LabelField("Welcome to Cinemachine!", mLabelStyle);
                 EditorGUILayout.LabelField("Smart camera tools for passionate creators.", mLabelStyle);
-                //EditorGUILayout.SelectableLabel("user@cinemachineimagery.com", mLabelStyle);
-                EditorGUILayout.LabelField("Below are links to the documentation and to the forums, please reach out if you have any questions or feedback", mLabelStyle);
-
-                if (GUILayout.Button("<b>Documentation</b>\n<i>Read</i>", mButtonStyle))
-                {
-                    Application.OpenURL("http://www.cinemachineimagery.com/documentation/");
-                }
-
-                if (GUILayout.Button("<b>Tutorials</b>\n<i>Watch</i>", mButtonStyle))
-                {
-                    Application.OpenURL("http://www.cinemachineimagery.com/tutorials/");
-                }
+                EditorGUILayout.LabelField("Below are links to the forums, please reach out if you have any questions or feedback", mLabelStyle);
 
                 if (GUILayout.Button("<b>Forum</b>\n<i>Discuss</i>", mButtonStyle))
                 {
@@ -97,7 +77,7 @@ namespace Cinemachine.Editor
 
                 if (GUILayout.Button("<b>Rate it!</b>\nUnity Asset Store", mButtonStyle))
                 {
-                    Application.OpenURL("https://www.assetstore.unity3d.com/#!/content/60946");
+                    Application.OpenURL("https://www.assetstore.unity3d.com/en/#!/content/79898");
                 }
             }
 
@@ -105,14 +85,8 @@ namespace Cinemachine.Editor
             using (var scrollScope = new EditorGUILayout.ScrollViewScope(mReleaseNoteScrollPos, GUI.skin.box))
             {
                 mReleaseNoteScrollPos = scrollScope.scrollPosition;
-
+                EditorGUILayout.LabelField("Version " + CinemachineCore.kVersionString, mHeaderStyle);
             }
-
-            //using (var horScope = new EditorGUILayout.HorizontalScope())
-            //{
-            //    GUILayout.FlexibleSpace();
-            //    ShowOnStart = EditorGUILayout.Toggle("Show On Startup", ShowOnStart);
-            //}
         }
 
         [MenuItem("Cinemachine/About")]
@@ -124,10 +98,8 @@ namespace Cinemachine.Editor
         private static void ShowWindowDeferred()
         {
             string loadedVersion = LastVersionLoaded;
-            if (loadedVersion != Cinemachine.Utility.CinemachineDebugLogger.kVersionString)
-            {
-                LastVersionLoaded = Cinemachine.Utility.CinemachineDebugLogger.kVersionString;
-            }
+            if (loadedVersion != CinemachineCore.kVersionString)
+                LastVersionLoaded = CinemachineCore.kVersionString;
 
             AboutWindow window = EditorWindow.GetWindow<AboutWindow>();
 

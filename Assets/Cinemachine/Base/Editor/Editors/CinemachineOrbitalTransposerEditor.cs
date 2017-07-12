@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 namespace Cinemachine.Editor
@@ -13,14 +13,16 @@ namespace Cinemachine.Editor
         public override void OnInspectorGUI()
         {
             if (m_excludeFieldsSlaveMode == null)
-                m_excludeFieldsSlaveMode = new string[] 
-                { 
-                    "m_Script", 
-                    SerializedPropertyHelper.PropertyName(()=>Target.m_XAxis), 
-                    SerializedPropertyHelper.PropertyName(()=>Target.m_RecenterToTargetHeading)
+                m_excludeFieldsSlaveMode = new string[]
+                {
+                    "m_Script",
+                    SerializedPropertyHelper.PropertyName(() => Target.m_DampingStyle),
+                    SerializedPropertyHelper.PropertyName(() => Target.m_HeadingBias),
+                    SerializedPropertyHelper.PropertyName(() => Target.m_XAxis),
+                    SerializedPropertyHelper.PropertyName(() => Target.m_RecenterToTargetHeading)
                 };
             serializedObject.Update();
-            DrawPropertiesExcluding(serializedObject, 
+            DrawPropertiesExcluding(serializedObject,
                 Target.m_HeadingIsSlave ? m_excludeFieldsSlaveMode : m_excludeFields);
             serializedObject.ApplyModifiedProperties();
         }

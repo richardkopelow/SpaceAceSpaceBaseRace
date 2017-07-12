@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 namespace Cinemachine.Editor
@@ -17,20 +17,19 @@ namespace Cinemachine.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                Target.RebuildCurbFeelers();
             }
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.Selected, typeof(CinemachineCollider))]
-        private static void DrawGizmos(CinemachineCollider collider, GizmoType type)
+        private static void DrawColliderGizmos(CinemachineCollider collider, GizmoType type)
         {
             CinemachineVirtualCameraBase vcam = (collider != null) ? collider.VirtualCamera : null;
             if (vcam != null && collider.enabled)
             {
                 Color oldColor = Gizmos.color;
                 bool isLive = CinemachineCore.Instance.IsLive(vcam);
-                Color feelerColor = isLive 
-                    ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour 
+                Color feelerColor = isLive
+                    ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour
                     : CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour;
                 Color hitColour = isLive ? Color.white : Color.grey;
 
@@ -39,14 +38,15 @@ namespace Cinemachine.Editor
                 {
                     Vector3 forwardFeelerVector = (vcam.State.ReferenceLookAt - pos).normalized;
                     float distance = collider.m_LineOfSightFeelerDistance;
-                    Gizmos.color = collider.IsTargetObscured ? hitColour : feelerColor;
+                    Gizmos.color = collider.IsTargetObscured(vcam.LiveChildOrSelf) ? hitColour : feelerColor;
                     Gizmos.DrawLine(pos, pos + forwardFeelerVector * distance);
                 }
 
                 if (collider.m_UseCurbFeelers)
                 {
                     Quaternion orientation = vcam.State.FinalOrientation;
-                    foreach (CinemachineCollider.CompiledCurbFeeler feeler in collider.Feelers)
+                    var feelers = collider.GetFeelers(vcam.LiveChildOrSelf);
+                    foreach (CinemachineCollider.CompiledCurbFeeler feeler in feelers)
                     {
                         Vector3 worldDirection = orientation * feeler.LocalVector;
                         Gizmos.color = feeler.IsHit ? hitColour : feelerColor;

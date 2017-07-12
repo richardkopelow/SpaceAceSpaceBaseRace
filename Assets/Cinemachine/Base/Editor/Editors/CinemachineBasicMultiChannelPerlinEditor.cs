@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 
 namespace Cinemachine.Editor
 {
@@ -12,11 +12,11 @@ namespace Cinemachine.Editor
         private void OnEnable()
         {
             m_SettingsEditor = new EmbeddeAssetEditor<NoiseSettings>(
-                SerializedPropertyHelper.PropertyName(()=> Target.m_Definition), this);
-            m_SettingsEditor.OnChanged = (NoiseSettings noise) => 
-            {
-                UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
-            };
+                    SerializedPropertyHelper.PropertyName(() => Target.m_Definition), this);
+            m_SettingsEditor.OnChanged = (NoiseSettings noise) =>
+                {
+                    UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+                };
         }
 
         private void OnDisable()
@@ -32,7 +32,7 @@ namespace Cinemachine.Editor
             serializedObject.ApplyModifiedProperties();
 
             m_SettingsEditor.DrawEditorCombo(
-                "Create New Noise Asset", 
+                "Create New Noise Asset",
                 Target.gameObject.name + " Noise Settings", "asset", string.Empty,
                 "Noise Settings", true);
 

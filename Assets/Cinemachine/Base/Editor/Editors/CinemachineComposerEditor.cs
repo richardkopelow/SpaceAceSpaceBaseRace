@@ -1,29 +1,29 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using Cinemachine.Utility;
 
 namespace Cinemachine.Editor
 {
     [CustomEditor(typeof(CinemachineComposer))]
-    internal sealed class CinemachineComposerEditor : UnityEditor.Editor
+    internal class CinemachineComposerEditor : UnityEditor.Editor
     {
         private CinemachineComposer Target { get { return target as CinemachineComposer; } }
-        private static readonly string[] m_excludeFields = new string[] { "m_Script" };
-
         private const float kGuideBarWidthPx = 3f;
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             Target.OnGUICallback += OnGUI;
             UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             if (Target != null)
                 Target.OnGUICallback -= OnGUI;
             UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
         }
+
+        protected virtual string[] GetExcludedFields() { return new string[] { "m_Script" }; }
 
         public override void OnInspectorGUI()
         {
@@ -34,7 +34,7 @@ namespace Cinemachine.Editor
             Rect oldSoft = Target.SoftGuideRect;
 
             // Draw the properties
-            DrawPropertiesExcluding(serializedObject, m_excludeFields);
+            DrawPropertiesExcluding(serializedObject, GetExcludedFields());
             serializedObject.ApplyModifiedProperties();
 
             // Enforce some rules
@@ -57,11 +57,13 @@ namespace Cinemachine.Editor
         }
 
         // For dragging the bars - order defines precedence
-        private enum DragBar { 
+        private enum DragBar
+        {
             Center,
             SoftBarLineLeft, SoftBarLineTop, SoftBarLineRight, SoftBarLineBottom,
             HardBarLineLeft, HardBarLineTop, HardBarLineRight, HardBarLineBottom,
-            NONE };
+            NONE
+        };
         private DragBar mDragging = DragBar.NONE;
         private Rect[] mDragBars = new Rect[9];
 
@@ -91,8 +93,8 @@ namespace Cinemachine.Editor
             if (mDragging != DragBar.NONE && Event.current.type == EventType.MouseDrag)
             {
                 Vector2 d = new Vector2(
-                    Event.current.delta.x / screenWidth, 
-                    Event.current.delta.y / screenHeight);
+                        Event.current.delta.x / screenWidth,
+                        Event.current.delta.y / screenHeight);
 
                 // First snapshot some settings
                 Rect newHard = Target.HardGuideRect;
@@ -117,7 +119,7 @@ namespace Cinemachine.Editor
             }
         }
 
-        private void OnGUI()
+        protected virtual void OnGUI()
         {
             // Draw the camera guides
             if (!Target.m_ShowGuides)
@@ -157,11 +159,11 @@ namespace Cinemachine.Editor
             float hardEdgeTop = r.yMin * screenHeight;
             float hardEdgeRight = r.xMax * screenWidth;
             float hardEdgeBottom = r.yMax * screenHeight;
-        
+
             mDragBars[(int)DragBar.HardBarLineLeft] = new Rect(hardEdgeLeft - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
             mDragBars[(int)DragBar.HardBarLineTop] = new Rect(0f, hardEdgeTop - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
             mDragBars[(int)DragBar.HardBarLineRight] = new Rect(hardEdgeRight - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
-            mDragBars[(int)DragBar.HardBarLineBottom] = new Rect(0f, hardEdgeBottom -kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
+            mDragBars[(int)DragBar.HardBarLineBottom] = new Rect(0f, hardEdgeBottom - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
 
             r = Target.SoftGuideRect;
             float softEdgeLeft = r.xMin * screenWidth;
@@ -174,7 +176,7 @@ namespace Cinemachine.Editor
             mDragBars[(int)DragBar.SoftBarLineRight] = new Rect(softEdgeRight - kGuideBarWidthPx / 2f, 0f, kGuideBarWidthPx, screenHeight);
             mDragBars[(int)DragBar.SoftBarLineBottom] = new Rect(0f, softEdgeBottom - kGuideBarWidthPx / 2f, screenWidth, kGuideBarWidthPx);
 
-            mDragBars[(int)DragBar.Center] = new Rect(softEdgeLeft, softEdgeTop, softEdgeRight-softEdgeLeft, softEdgeBottom-softEdgeTop);
+            mDragBars[(int)DragBar.Center] = new Rect(softEdgeLeft, softEdgeTop, softEdgeRight - softEdgeLeft, softEdgeBottom - softEdgeTop);
 
             // Handle dragging bars
             OnGuiHandleBarDragging(screenWidth, screenHeight);
@@ -182,13 +184,13 @@ namespace Cinemachine.Editor
             // Draw the masks
             GUI.color = hardBarsColour;
             Rect hardBarLeft = new Rect(0, hardEdgeTop, Mathf.Max(0, hardEdgeLeft), hardEdgeBottom - hardEdgeTop);
-            Rect hardBarRight = new Rect(hardEdgeRight, hardEdgeTop,  
-                Mathf.Max(0, screenWidth - hardEdgeRight), hardEdgeBottom - hardEdgeTop);
+            Rect hardBarRight = new Rect(hardEdgeRight, hardEdgeTop,
+                    Mathf.Max(0, screenWidth - hardEdgeRight), hardEdgeBottom - hardEdgeTop);
             Rect hardBarTop = new Rect(Mathf.Min(0, hardEdgeLeft), 0,
-                Mathf.Max(screenWidth, hardEdgeRight) - Mathf.Min(0, hardEdgeLeft), Mathf.Max(0, hardEdgeTop));
-            Rect hardBarBottom = new Rect(Mathf.Min(0, hardEdgeLeft), hardEdgeBottom, 
-                Mathf.Max(screenWidth, hardEdgeRight) - Mathf.Min(0, hardEdgeLeft), 
-                Mathf.Max(0, screenHeight - hardEdgeBottom));
+                    Mathf.Max(screenWidth, hardEdgeRight) - Mathf.Min(0, hardEdgeLeft), Mathf.Max(0, hardEdgeTop));
+            Rect hardBarBottom = new Rect(Mathf.Min(0, hardEdgeLeft), hardEdgeBottom,
+                    Mathf.Max(screenWidth, hardEdgeRight) - Mathf.Min(0, hardEdgeLeft),
+                    Mathf.Max(0, screenHeight - hardEdgeBottom));
             GUI.DrawTexture(hardBarLeft, Texture2D.whiteTexture, ScaleMode.StretchToFill);
             GUI.DrawTexture(hardBarTop, Texture2D.whiteTexture, ScaleMode.StretchToFill);
             GUI.DrawTexture(hardBarRight, Texture2D.whiteTexture, ScaleMode.StretchToFill);
@@ -218,16 +220,16 @@ namespace Cinemachine.Editor
 
             GUI.matrix = oldMatrix;
 
-            // Draw an on-screen gizmo for the target 
+            // Draw an on-screen gizmo for the target
             if (Target.VirtualCamera.LookAt != null && isLive)
             {
                 Vector2 targetScreenPosition = brain.OutputCamera.WorldToScreenPoint(
-                    Target.VirtualCamera.LookAt.TransformPoint(Target.m_TrackedObjectOffset));
+                        Target.VirtualCamera.State.ReferenceLookAt);
                 targetScreenPosition.y = Screen.height - targetScreenPosition.y;
 
                 GUI.color = CinemachineSettings.ComposerSettings.TargetColour;
                 r = new Rect(targetScreenPosition, Vector2.zero);
-                float size = (CinemachineSettings.ComposerSettings.TargetSize + kGuideBarWidthPx)/2;
+                float size = (CinemachineSettings.ComposerSettings.TargetSize + kGuideBarWidthPx) / 2;
                 GUI.DrawTexture(r.Inflated(new Vector2(size, size)), Texture2D.whiteTexture);
                 size -= kGuideBarWidthPx;
                 if (size > 0)

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System;
 
@@ -9,7 +9,6 @@ namespace Cinemachine.Editor
     {
         public static class CinemachineCoreSettings
         {
-            private static readonly string kCoreGUIKey = "CNMCN_Core_GUI";
             private static readonly string kCoreActiveGizmoColourKey = "CNMCN_Core_Active_Gizmo_Colour";
             private static readonly string kCoreInactiveGizmoColourKey = "CNMCN_Core_Inactive_Gizmo_Colour";
 
@@ -20,12 +19,6 @@ namespace Cinemachine.Editor
             {
                 get { return CinemachineCore.sShowHiddenObjects; }
                 set { CinemachineCore.sShowHiddenObjects  = value; }
-            }
-
-            public static bool CoreGUIEnabled
-            {
-                get { return EditorPrefs.GetBool(kCoreGUIKey, false); }
-                set { EditorPrefs.SetBool(kCoreGUIKey, value); }
             }
 
             public static Color ActiveGizmoColour
@@ -92,7 +85,7 @@ namespace Cinemachine.Editor
 
             public static Color HardBoundsOverlayColour
             {
-                get 
+                get
                 {
                     string packedColour = EditorPrefs.GetString(kComposerHardBoundsColourKey, PackColor(kDefaultHardBoundsColour));
                     return UnpackColour(packedColour);
@@ -204,7 +197,8 @@ namespace Cinemachine.Editor
             get
             {
                 if (sCinemachineHeader == null)
-                    sCinemachineHeader = Resources.Load<Texture2D>("cinemachine_header");;
+                    sCinemachineHeader = Resources.Load<Texture2D>("cinemachine_header");
+                ;
                 if (sCinemachineHeader != null)
                     sCinemachineHeader.hideFlags = HideFlags.DontSaveInEditor;
                 return sCinemachineHeader;
@@ -212,17 +206,12 @@ namespace Cinemachine.Editor
         }
 
         private static readonly string kCoreSettingsFoldKey     = "CNMCN_Core_Folded";
-        private static readonly string kComposerSettingsFoldKey = "CNMCN_Composer_Folded";  
+        private static readonly string kComposerSettingsFoldKey = "CNMCN_Composer_Folded";
 
         internal static event Action AdditionalCategories = null;
 
         static CinemachineSettings()
         {
-            if (CinemachineCoreSettings.CoreGUIEnabled)
-            {
-                CinemachineCoreDebugger.AttachDebugger();
-            }
-
             if (CinemachineLogoTexture != null)
             {
                 EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyGUI;
@@ -230,7 +219,6 @@ namespace Cinemachine.Editor
         }
 
         //private static readonly GUIContent sCoreShowHiddenObjectsToggle = new GUIContent("Show Hidden Objects", "If checked, Cinemachine hidden objects will be shown in the inspector.  This might be necessary to repair broken script mappings when upgrading from a pre-release version");
-        private static readonly GUIContent sCoreGUIToggle = new GUIContent("Runtime Debugger", "Shows or hides the Cinemachine Runtime Debugger in the Game Camera Window");
         private static readonly GUIContent sCoreActiveGizmosColour = new GUIContent("Active Virtual Camera", "The colour for the active virtual camera's gizmos");
         private static readonly GUIContent sCoreInactiveGizmosColour = new GUIContent("Inactive Virtual Camera", "The colour for all inactive virtual camera gizmos");
 
@@ -252,7 +240,7 @@ namespace Cinemachine.Editor
             {
                 const float kWidth = 350f;
                 float aspectRatio = (float)CinemachineHeader.height / (float)CinemachineHeader.width;
-                GUILayout.BeginScrollView(Vector2.zero, false, false, GUILayout.Width(kWidth), GUILayout.Height(kWidth*aspectRatio));
+                GUILayout.BeginScrollView(Vector2.zero, false, false, GUILayout.Width(kWidth), GUILayout.Height(kWidth * aspectRatio));
                 Rect texRect = new Rect(0f, 0f, kWidth, kWidth * aspectRatio);
 
                 GUILayout.BeginArea(texRect);
@@ -264,7 +252,7 @@ namespace Cinemachine.Editor
 
             sScrollPosition = GUILayout.BeginScrollView(sScrollPosition);
 
-            //CinemachineCoreSettings.ShowHiddenObjects 
+            //CinemachineCoreSettings.ShowHiddenObjects
             //    = EditorGUILayout.Toggle(sCoreShowHiddenObjectsToggle, CinemachineCoreSettings.ShowHiddenObjects);
 
             ShowCoreSettings = EditorGUILayout.Foldout(ShowCoreSettings, "Runtime Settings");
@@ -272,23 +260,6 @@ namespace Cinemachine.Editor
             {
                 EditorGUI.indentLevel++;
                 EditorGUI.BeginChangeCheck();
-
-                bool coreGUIEnabled = EditorGUILayout.Toggle(sCoreGUIToggle, CinemachineCoreSettings.CoreGUIEnabled);
-
-                if (EditorGUI.EndChangeCheck())
-                {
-                    CinemachineCoreSettings.CoreGUIEnabled = coreGUIEnabled;
-
-                    if (CinemachineCoreSettings.CoreGUIEnabled)
-                    {
-                        CinemachineCoreDebugger.AttachDebugger();
-                    }
-                    else
-                    {
-                        CinemachineCoreDebugger.RemoveDebugger();
-                    }
-                }
-
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.BeginChangeCheck();
                 Color newActiveGizmoColour = EditorGUILayout.ColorField(sCoreActiveGizmosColour, CinemachineCoreSettings.ActiveGizmoColour);
@@ -405,10 +376,10 @@ namespace Cinemachine.Editor
 
             GUILayout.EndScrollView();
 
-            if (GUILayout.Button("Open Documentation"))
-            {
-                Application.OpenURL(kCinemachineDocURL);
-            }
+            //if (GUILayout.Button("Open Documentation"))
+            //{
+            //    Application.OpenURL(kCinemachineDocURL);
+            //}
         }
 
         private static void OnHierarchyGUI(int instanceID, Rect selectionRect)
@@ -420,7 +391,7 @@ namespace Cinemachine.Editor
                 return;
             }
 
-            if (instance.GetComponent<CinemachineBrain>() != null) 
+            if (instance.GetComponent<CinemachineBrain>() != null)
             {
                 Rect texRect = new Rect(selectionRect.xMax - selectionRect.height, selectionRect.yMin, selectionRect.height, selectionRect.height);
                 GUI.DrawTexture(texRect, CinemachineLogoTexture, ScaleMode.ScaleAndCrop);

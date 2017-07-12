@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using UnityEngine;
 using Cinemachine.Utility;
@@ -7,10 +7,12 @@ using System.Collections.Generic;
 namespace Cinemachine.Blackboard
 {
     /// <summary>
-    /// Cinemachine Reactor is a decorator of the <see cref="CinemachineVirtualCamera"/> 
+    /// Cinemachine Reactor is a decorator of the CinemachineVirtualCamera
     /// which modulates its fields based on the input mappings specified here.
-    /// and the data present in <see cref="Blackboard.CinemachineBlackboard"/>
+    /// and the data present in Blackboard.CinemachineBlackboard
     /// </summary>
+    [DocumentationSorting(301, DocumentationSortingAttribute.Level.UserRef)]
+    [SaveDuringPlay]
     public class Reactor : MonoBehaviour
     {
         /// <summary>
@@ -26,8 +28,8 @@ namespace Cinemachine.Blackboard
         };
 
         /// <summary>
-        /// Wrapper class containing a series of remappings to convert blackboard variables into 
-        /// an input into <see cref="Reactor"/>
+        /// Wrapper class containing a series of remappings to convert blackboard variables into
+        /// an input into Reactor
         /// </summary>
         [Serializable]
         public struct BlackboardExpression
@@ -45,7 +47,7 @@ namespace Cinemachine.Blackboard
                 public CombineMode m_Operation;
 
                 /// <summary>
-                /// The key in the <see cref="Blackboard.CinemachineBlackboard"/> to get the value for
+                /// The key in the Blackboard.CinemachineBlackboard to get the value for
                 /// </summary>
                 [Tooltip("Value to look up on the Blackboard.  You need to have a script post this value on the blackboard.")]
                 public string m_BlackboardKey;
@@ -57,26 +59,26 @@ namespace Cinemachine.Blackboard
                 public bool m_Remap;
 
                 /// <summary>
-                /// A remap curve for the value found in the <see cref="Blackboard.CinemachineBlackboard"/>. 
+                /// A remap curve for the value found in the Blackboard.CinemachineBlackboard.
                 /// The X-axis represents the Blackboard value, and the Y-axis represents the output value from the remapping
                 /// </summary>
                 [Tooltip("How to modily the value read from the blackboard before using it.  The X-axis represents the Blackboard value, and the Y-axis represents the output value.")]
                 public AnimationCurve m_RemapCurve;
             }
-        
+
             [Tooltip("The inputs from the blackboard to be used in deriving the final value for this input mapper")]
             public Line[] m_Lines;
 
             public int GetNumLines() { return m_Lines == null ? 0 : m_Lines.Length; }
 
             /// <summary>
-            /// Evaluates this <see cref="BlackboardExpression"/> against the supplied <see cref="Blackboard"/>. 
-            /// Will attempt find and remap values from the blackboard and combine them as defined in the 
-            /// array of <see cref="Mapping"/>
+            /// Evaluates this BlackboardExpression against the supplied Blackboard.
+            /// Will attempt find and remap values from the blackboard and combine them as defined in the
+            /// array of Mapping
             /// </summary>
-            /// <param name="againstBlackboard">The blackboard used to retrieve values from for the 
+            /// <param name="againstBlackboard">The blackboard used to retrieve values from for the
             /// remappings</param>
-            /// <returns>The computed result of the remappings against the blackboard. 
+            /// <returns>The computed result of the remappings against the blackboard.
             internal bool Evaluate(Blackboard againstBlackboard, out float result)
             {
                 result = 0;
@@ -107,8 +109,8 @@ namespace Cinemachine.Blackboard
         }
 
         /// <summary>
-        /// Wrapper class containing a series of remappings to convert blackboard variables into 
-        /// an input into <see cref="Reactor"/>
+        /// Wrapper class containing a series of remappings to convert blackboard variables into
+        /// an input into Reactor
         /// </summary>
         [Serializable]
         public struct TargetModifier
@@ -136,30 +138,30 @@ namespace Cinemachine.Blackboard
                     TargetBinding binding = new TargetBinding();
 
                     GameObjectFieldScanner scanner = new GameObjectFieldScanner();
-                    scanner.OnLeafField = (fullName, fieldInfo, rootFieldOwner, value) => 
-                    { 
-                        //Debug.Log(fullName);
-                        if (fullName == fieldName)
+                    scanner.OnLeafField = (fullName, fieldInfo, rootFieldOwner, value) =>
                         {
-                            binding.mTargetFieldInfo = fieldInfo.ToArray();
-                            binding.mTargetFieldOwner = new object[binding.mTargetFieldInfo.Length];
-                            binding.mTargetFieldOwner[0] = rootFieldOwner;
-                            binding.mInitialValue = Convert.ToSingle(value);
-                            return false; // abort scan, we're done
-                        }
-                        return true;
-                    };
+                            //Debug.Log(fullName);
+                            if (fullName == fieldName)
+                            {
+                                binding.mTargetFieldInfo = fieldInfo.ToArray();
+                                binding.mTargetFieldOwner = new object[binding.mTargetFieldInfo.Length];
+                                binding.mTargetFieldOwner[0] = rootFieldOwner;
+                                binding.mInitialValue = Convert.ToSingle(value);
+                                return false; // abort scan, we're done
+                            }
+                            return true;
+                        };
                     scanner.ScanFields(target);
 
                     if (!binding.IsValid)
-                        CinemachineDebugLogger.LogWarn(
-                            GetFullName(target) + " Reactor: can't find " + 
-                            ((fieldName.Length == 0) ? "(empty)" : fieldName));
+                        Debug.Log(string.Format(
+                                GetFullName(target) + " Reactor: can't find " +
+                                ((fieldName.Length == 0) ? "(empty)" : fieldName)));
 
                     return binding;
                 }
 
-                static string GetFullName(GameObject current) 
+                static string GetFullName(GameObject current)
                 {
                     if (current == null)
                         return "";
@@ -171,22 +173,22 @@ namespace Cinemachine.Blackboard
                 public bool IsValid { get { return mTargetFieldInfo != null && mTargetFieldOwner != null; } }
                 public float Value
                 {
-                    get 
+                    get
                     {
-                        int last = mTargetFieldInfo.Length-1;
+                        int last = mTargetFieldInfo.Length - 1;
                         object obj = mTargetFieldOwner[0];
                         for (int i = 0; i < last; ++i)
                             obj = mTargetFieldInfo[i].GetValue(obj);
-                        return Convert.ToSingle(mTargetFieldInfo[last].GetValue(obj)); 
+                        return Convert.ToSingle(mTargetFieldInfo[last].GetValue(obj));
                     }
-                    set 
-                    { 
-                        int last = mTargetFieldInfo.Length-1;
+                    set
+                    {
+                        int last = mTargetFieldInfo.Length - 1;
                         for (int i = 0; i < last; ++i)
-                            mTargetFieldOwner[i+1] = mTargetFieldInfo[i].GetValue(mTargetFieldOwner[i]);
-                        mTargetFieldInfo[last].SetValue(mTargetFieldOwner[last], value); 
-                        for (int i = last-1; i >= 0; --i)
-                            mTargetFieldInfo[i].SetValue(mTargetFieldOwner[i], mTargetFieldOwner[i+1]); 
+                            mTargetFieldOwner[i + 1] = mTargetFieldInfo[i].GetValue(mTargetFieldOwner[i]);
+                        mTargetFieldInfo[last].SetValue(mTargetFieldOwner[last], value);
+                        for (int i = last - 1; i >= 0; --i)
+                            mTargetFieldInfo[i].SetValue(mTargetFieldOwner[i], mTargetFieldOwner[i + 1]);
                     }
                 }
 
@@ -235,7 +237,7 @@ namespace Cinemachine.Blackboard
 
                 if (m_TargetMappings[i].Binding == null)
                     m_TargetMappings[i].Binding = TargetModifier.TargetBinding.BindTarget(
-                        gameObject, m_TargetMappings[i].m_Field);
+                            gameObject, m_TargetMappings[i].m_Field);
                 if (!m_TargetMappings[i].Binding.IsValid)
                     continue;
 
@@ -279,7 +281,7 @@ namespace Cinemachine.Blackboard
                 // Check if it's a complex type
                 bool isLeaf = true;
                 if (obj != null
-                    && !fieldInfo.FieldType.IsSubclassOf(typeof(Component)) 
+                    && !fieldInfo.FieldType.IsSubclassOf(typeof(Component))
                     && !fieldInfo.FieldType.IsSubclassOf(typeof(GameObject)))
                 {
                     // Check if it's a complex type
@@ -305,7 +307,7 @@ namespace Cinemachine.Blackboard
 
                 return true;
             }
-        
+
             public bool ScanFields(string fullName, MonoBehaviour b)
             {
                 // A little special handling for some known classes
@@ -320,7 +322,7 @@ namespace Cinemachine.Blackboard
                     for (int i = 0; i < fields.Length; ++i)
                     {
                         if (vcam != null && Array.FindIndex(
-                            vcam.m_ExcludedPropertiesInInspector, match => match == fields[i].Name) >= 0)
+                                vcam.m_ExcludedPropertiesInInspector, match => match == fields[i].Name) >= 0)
                         {
                             // Not settable by user, so don't show it
                             continue;
@@ -333,7 +335,7 @@ namespace Cinemachine.Blackboard
                             fieldChain.Add(fields[i]);
                             if (!ScanFields(name, fieldChain, fieldValue, b))
                                 return false;
-                         }
+                        }
                     }
                 }
                 return true;
@@ -356,7 +358,7 @@ namespace Cinemachine.Blackboard
                     if (c != null && !ScanFields(prefix + c.GetType().FullName, c))
                         return false;
 
-                foreach (Transform child in go.transform) 
+                foreach (Transform child in go.transform)
                     if (!ScanFields(child.gameObject, prefix + child.gameObject.name))
                         return false;
 

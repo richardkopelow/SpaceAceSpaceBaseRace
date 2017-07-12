@@ -11,23 +11,16 @@ namespace Cinemachine
     {
         private CinemachineFreeLook Target { get { return (CinemachineFreeLook)target; } }
 
-        protected override string[] GetExcludedPropertiesInInspector()
+        protected override List<string> GetExcludedPropertiesInInspector()
         {
-            string[] excluded = Target.m_ExcludedPropertiesInInspector;
-            if (Target.m_UseCommonLensSetting)
-                return excluded;
-
-            // If not using a common lens, hide the lens settings
-            int len = (excluded == null) ? 0 : excluded.Length;
-            string[] excluded2 = new string[len+1];
-            for (int i = 0; i < len; ++i)
-                excluded2[i]= excluded[i];
-            excluded2[len] = SerializedPropertyHelper.PropertyName(()=>Target.m_LensAttributes);
-            return excluded2;
+            List<string> excluded = base.GetExcludedPropertiesInInspector();
+            if (!Target.m_UseCommonLensSetting)
+                excluded.Add(SerializedPropertyHelper.PropertyName(() => Target.m_Lens));
+            return excluded;
         }
 
         protected override void OnDisable()
-        {   
+        {
             base.OnDisable();
 
             // Must destroy child editors or we get exceptions
@@ -36,7 +29,7 @@ namespace Cinemachine
                     if (e != null)
                         UnityEngine.Object.DestroyImmediate(e);
         }
-        
+
         public override void OnInspectorGUI()
         {
             // Ordinary properties
@@ -87,55 +80,55 @@ namespace Cinemachine
         /// Register with CinemachineFreeLook to create the pipeline in an undo-friendly manner
         /// </summary>
         [InitializeOnLoad]
-        class CreateRigWithUndo 
-        { 
-            static CreateRigWithUndo() 
-            { 
-                CinemachineFreeLook.CreateRigOverride 
-                    = (CinemachineFreeLook vcam, string name, CinemachineVirtualCamera copyFrom) => 
-                {
-                    // If there is an existing rig with this name, delete it
-                    List<Transform> list = new List<Transform>();
-                    foreach (Transform child in vcam.transform) 
-                        if (child.GetComponent<CinemachineVirtualCamera>() != null
-                                    && child.gameObject.name == name)
-                            list.Add(child);
-                    foreach (Transform child in list)
-                         Undo.DestroyObjectImmediate(child.gameObject);
-
-                    // Create a new rig with default components
-                    GameObject go = new GameObject(name);
-                    Undo.RegisterCreatedObjectUndo(go, "created rig");
-                    Undo.SetTransformParent(go.transform, vcam.transform, "parenting rig");
-                    CinemachineVirtualCamera rig = Undo.AddComponent<CinemachineVirtualCamera>(go);
-                    Undo.RecordObject(rig, "creating rig");
-                    if (copyFrom != null)
-                        ReflectionHelpers.CopyFields(copyFrom, rig);
-                    else
+        class CreateRigWithUndo
+        {
+            static CreateRigWithUndo()
+            {
+                CinemachineFreeLook.CreateRigOverride
+                    = (CinemachineFreeLook vcam, string name, CinemachineVirtualCamera copyFrom) =>
                     {
-                        go = rig.GetComponentOwner().gameObject;
-                        Undo.RecordObject(Undo.AddComponent<CinemachineOrbitalTransposer>(go), "creating rig");
-                        Undo.RecordObject(Undo.AddComponent<CinemachineComposer>(go), "creating rig");
-                    }
-                    return rig;
-                };
-                CinemachineFreeLook.DestroyRigOverride = (GameObject rig) => 
-                {
-                    Undo.DestroyObjectImmediate(rig);
-                };
+                        // If there is an existing rig with this name, delete it
+                        List<Transform> list = new List<Transform>();
+                        foreach (Transform child in vcam.transform)
+                            if (child.GetComponent<CinemachineVirtualCamera>() != null
+                                && child.gameObject.name == name)
+                                list.Add(child);
+                        foreach (Transform child in list)
+                            Undo.DestroyObjectImmediate(child.gameObject);
+
+                        // Create a new rig with default components
+                        GameObject go = new GameObject(name);
+                        Undo.RegisterCreatedObjectUndo(go, "created rig");
+                        Undo.SetTransformParent(go.transform, vcam.transform, "parenting rig");
+                        CinemachineVirtualCamera rig = Undo.AddComponent<CinemachineVirtualCamera>(go);
+                        Undo.RecordObject(rig, "creating rig");
+                        if (copyFrom != null)
+                            ReflectionHelpers.CopyFields(copyFrom, rig);
+                        else
+                        {
+                            go = rig.GetComponentOwner().gameObject;
+                            Undo.RecordObject(Undo.AddComponent<CinemachineOrbitalTransposer>(go), "creating rig");
+                            Undo.RecordObject(Undo.AddComponent<CinemachineComposer>(go), "creating rig");
+                        }
+                        return rig;
+                    };
+                CinemachineFreeLook.DestroyRigOverride = (GameObject rig) =>
+                    {
+                        Undo.DestroyObjectImmediate(rig);
+                    };
             }
         }
-        
+
         [DrawGizmo(GizmoType.Active | GizmoType.Selected, typeof(CinemachineFreeLook))]
         private static void DrawFreeLookGizmos(CinemachineFreeLook vcam, GizmoType selectionType)
         {
             // Standard frustum and logo
-            CinemachineVirtualCameraBaseEditor.DrawVirtualCameraGizmos(vcam, selectionType);
+            CinemachineVirtualCameraBaseEditor.DrawVirtualCameraBaseGizmos(vcam, selectionType);
 
             Color originalGizmoColour = Gizmos.color;
             bool isActiveVirtualCam = CinemachineCore.Instance.IsLive(vcam);
             Gizmos.color = isActiveVirtualCam
-                ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour 
+                ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour
                 : CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour;
 
             if (vcam.Follow != null)
@@ -157,7 +150,7 @@ namespace Cinemachine
         {
             Matrix4x4 prevMatrix = Gizmos.matrix;
             Matrix4x4 localToWorld = Matrix4x4.TRS(
-                atPos, Quaternion.AngleAxis(vcam.m_XAxis.Value, Vector3.up), Vector3.one);
+                    atPos, Quaternion.AngleAxis(vcam.m_XAxis.Value, Vector3.up), Vector3.one);
             Gizmos.matrix = localToWorld;
 
             const int kNumStepsPerPair = 30;
@@ -167,6 +160,7 @@ namespace Cinemachine
                 float t = (float)i / (float)kNumStepsPerPair;
                 Vector3 nextPos = vcam.GetLocalPositionForCameraFromInput(t);
                 Gizmos.DrawLine(currPos, nextPos);
+                Gizmos.DrawWireSphere(nextPos, 0.02f);
                 currPos = nextPos;
             }
             Gizmos.matrix = prevMatrix;

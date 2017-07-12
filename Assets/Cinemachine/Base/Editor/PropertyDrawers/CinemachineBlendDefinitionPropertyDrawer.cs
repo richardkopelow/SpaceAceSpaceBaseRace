@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 namespace Cinemachine.Editor
@@ -15,7 +15,7 @@ namespace Cinemachine.Editor
             GUIContent timeText = new GUIContent("sec");
             var textDimensions = GUI.skin.label.CalcSize(timeText);
 
-            rect = EditorGUI.PrefixLabel(rect, label); 
+            rect = EditorGUI.PrefixLabel(rect, label);
 
             rect.y += vSpace;
             rect.height = EditorGUIUtility.singleLineHeight;
