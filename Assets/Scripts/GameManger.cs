@@ -20,6 +20,7 @@ public class GameManger : NetworkBehaviour
     public Cinemachine.CinemachineVirtualCamera BlueVirtualCamera;
     public Cinemachine.CinemachineVirtualCamera RedVirtualCamera;
     public Ship ShipPrefab;
+    public Transform ArrowPrefab;
 
     private LevelGenerator levelGenerator;
 
@@ -162,30 +163,46 @@ public class GameManger : NetworkBehaviour
     public void StartGame()
     {
         ServerUI.SetActive(false);
+
+        levelGenerator.Generate();
         #region Player Init
         //Spawn Ships
-        Ship blueShip = Instantiate<Ship>(ShipPrefab);
-        blueShip.Team = TeamEnum.Blue;
-        Transform blueShipTransform = blueShip.GetComponent<Transform>();
-        BlueVirtualCamera.Follow = blueShipTransform;
-        blueShipTransform.position = new Vector3(1, 0, 0);
+        Ship blueShip = spawnShip(TeamEnum.Blue);
         foreach (PlayerScript player in blueTeam)
         {
             player.ShipComponent = blueShip.ShipComponents[player.ComponentIndex % blueShip.ShipComponents.Length];
         }
 
-        Ship redShip = Instantiate<Ship>(ShipPrefab);
-        redShip.Team = TeamEnum.Red;
-        Transform redShipTransform = redShip.GetComponent<Transform>();
-        RedVirtualCamera.Follow = redShipTransform;
-        redShipTransform.position = new Vector3(-1, 0, 0);
+        Ship redShip = spawnShip(TeamEnum.Red);
         foreach (PlayerScript player in redTeam)
         {
             player.ShipComponent = redShip.ShipComponents[player.ComponentIndex % redShip.ShipComponents.Length];
         }
         #endregion
+    }
 
-        levelGenerator.Generate();
+    private Ship spawnShip(TeamEnum team)
+    {
+        Ship ship = Instantiate<Ship>(ShipPrefab);
+        ship.Team = team;
+        Transform shipTransform = ship.GetComponent<Transform>();
+        float xOffset = 1;
+        if (team== TeamEnum.Blue)
+        {
+            BlueVirtualCamera.Follow = shipTransform;
+        }
+        else
+        {
+            xOffset = -1;
+            RedVirtualCamera.Follow = shipTransform;
+        }
+        shipTransform.position = new Vector3(xOffset, 0, 0);
+        Transform arrow = Instantiate<Transform>(ArrowPrefab, shipTransform);
+        arrow.position = new Vector3(0, -0.5f, -5);
+        int layer = LayerMask.NameToLayer(team == TeamEnum.Blue ? "BlueCamera" : "RedCamera");
+        arrow.gameObject.layer = layer;
+
+        return ship;
     }
 
     public void EndGame(TeamEnum winningTeam)

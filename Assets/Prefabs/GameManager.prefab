@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59946be62111ca0469a9050510b5ba0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpaceBase: {fileID: 4801213621556626, guid: 094be2b7fbe960f4db50973542332bad, type: 2}
+  SpaceBase: {fileID: 4294157122096092, guid: ee8e9ba0af7ced34f90c789a02e00e42, type: 2}
   Asteroid: {fileID: 50584650165146480, guid: abfad8695d2fb124583db644d21e10f7, type: 2}
   MaxRadius: 40
   MinRadius: 30
@@ -110,4 +110,6 @@ MonoBehaviour:
   BlueVirtualCamera: {fileID: 0}
   RedVirtualCamera: {fileID: 0}
   ShipPrefab: {fileID: 114918798543354284, guid: 843a48dc6182a07489df7e834a96445d,
+    type: 2}
+  ArrowPrefab: {fileID: 4483784791303524, guid: f69ede0d5d41eac46ba114c7d55e648b,
     type: 2}

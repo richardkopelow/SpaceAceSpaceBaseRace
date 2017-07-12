@@ -19,7 +19,10 @@ public class Ship : MonoBehaviour
     {
         foreach (SpriteRenderer renderer in GetComponent<Transform>().GetComponentsInChildren<SpriteRenderer>())
         {
-            renderer.material = mat;
+            if (renderer.name != "Arrow")
+            {
+                renderer.material = mat;
+            }
         }
     }
 }

@@ -38,7 +38,7 @@
 				float4 _MainTex_ST;
 				fixed4 _FarColor;
 				fixed4 _NearColor;
-				float4 _TargetPosition;
+				uniform float4 _TargetPosition;
 				float _FarDistance;
 
 				v2f vert(appdata v)

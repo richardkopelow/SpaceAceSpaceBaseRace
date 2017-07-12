@@ -1463,12 +1463,6 @@ Prefab:
       propertyPath: RedVirtualCamera
       value: 
       objectReference: {fileID: 1214164598}
-    - target: {fileID: 114378398515359408, guid: f93630132e38c4e4e9063e66ce76550a,
-        type: 2}
-      propertyPath: SpaceBase
-      value: 
-      objectReference: {fileID: 4294157122096092, guid: ee8e9ba0af7ced34f90c789a02e00e42,
-        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f93630132e38c4e4e9063e66ce76550a, type: 2}
   m_IsPrefabParent: 0
@@ -2868,7 +2862,7 @@ AudioListener:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1947712885}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!124 &1947712887
 Behaviour:
   m_ObjectHideFlags: 0

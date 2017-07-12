@@ -16,6 +16,7 @@ public class LevelGenerator : MonoBehaviour
     {
         //Spawn Base
         Transform baseTrans = Instantiate<Transform>(SpaceBase);
+        baseTrans.name = "SpaceBase";
         float angle = Random.Range(0f, 2 * Mathf.PI);
         float radius = Random.Range(MinRadius, MaxRadius);
         baseTrans.position = new Vector3(Mathf.Cos(angle),Mathf.Sin(angle))*radius;
