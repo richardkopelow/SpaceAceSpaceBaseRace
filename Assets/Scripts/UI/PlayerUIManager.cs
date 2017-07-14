@@ -61,14 +61,14 @@ public class PlayerUIManager : MonoBehaviour
         Transform uiTransform = null;
         foreach (Transform ui in trans)
         {
-            if (ui.name == job.ToString())
+            if (ui.tag != "KeepUIVisible")
             {
-                ui.gameObject.SetActive(true);
-                uiTransform = ui;
-            }
-            else
-            {
-                if (ui.name != "UIDoor")
+                if (ui.name == job.ToString())
+                {
+                    ui.gameObject.SetActive(true);
+                    uiTransform = ui;
+                }
+                else
                 {
                     ui.gameObject.SetActive(false);
                 }
