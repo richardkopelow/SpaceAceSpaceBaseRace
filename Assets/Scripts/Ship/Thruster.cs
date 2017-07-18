@@ -5,6 +5,7 @@ using UnityEngine;
 public class Thruster : ShipComponent
 {
     public Rigidbody2D rigid;
+    public float Force = 5;
 
     Transform trans;
 
@@ -24,7 +25,7 @@ public class Thruster : ShipComponent
     {
         if (down)
         {
-            rigid.AddForceAtPosition(trans.up * 10, trans.position);
+            rigid.AddForceAtPosition(trans.up * Force, trans.position);
         }
     }
 

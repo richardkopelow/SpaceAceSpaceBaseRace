@@ -511,6 +511,7 @@ MonoBehaviour:
   ComponentName: Right Thruster
   Job: 1
   rigid: {fileID: 50551632719376422}
+  Force: 5
 --- !u!114 &114524008838388474
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -525,6 +526,7 @@ MonoBehaviour:
   ComponentName: Left Thruster
   Job: 1
   rigid: {fileID: 50551632719376422}
+  Force: 5
 --- !u!114 &114918798543354284
 MonoBehaviour:
   m_ObjectHideFlags: 1

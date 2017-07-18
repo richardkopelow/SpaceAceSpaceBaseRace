@@ -14,7 +14,7 @@ public class PlayerScript : NetworkBehaviour
         set
         {
             _shipComponent = value;
-            TargetAssignJob(connectionToClient, _shipComponent.Job);
+            TargetAssignJob(connectionToClient, value == null ? JobsEnum.ComponentPicker :_shipComponent.Job);
         }
     }
 

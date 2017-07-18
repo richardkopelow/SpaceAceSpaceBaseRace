@@ -19,6 +19,7 @@ public class GameManger : NetworkBehaviour
     public Text WinnerText;
     public Cinemachine.CinemachineVirtualCamera BlueVirtualCamera;
     public Cinemachine.CinemachineVirtualCamera RedVirtualCamera;
+    public Transform Level;
     public Ship ShipPrefab;
     public Transform ArrowPrefab;
 
@@ -183,11 +184,11 @@ public class GameManger : NetworkBehaviour
 
     private Ship spawnShip(TeamEnum team)
     {
-        Ship ship = Instantiate<Ship>(ShipPrefab);
+        Ship ship = Instantiate<Ship>(ShipPrefab, Level);
         ship.Team = team;
         Transform shipTransform = ship.GetComponent<Transform>();
         float xOffset = 1;
-        if (team== TeamEnum.Blue)
+        if (team == TeamEnum.Blue)
         {
             BlueVirtualCamera.Follow = shipTransform;
         }
@@ -205,12 +206,28 @@ public class GameManger : NetworkBehaviour
         return ship;
     }
 
-    public void EndGame(TeamEnum winningTeam)
+    public Coroutine EndGame(TeamEnum winningTeam)
+    {
+        return StartCoroutine(endGameCoroutine(winningTeam));
+    }
+
+    private IEnumerator endGameCoroutine(TeamEnum winningTeam)
     {
         foreach (PlayerScript player in players)
         {
             player.LockUI();
         }
         WinnerText.text = winningTeam == TeamEnum.Blue ? "The winner is <color=Blue>BLUE</color>" : "The winner is <color=Red>RED</color>";
+        yield return new WaitForSeconds(5);
+        WinnerText.text = "";
+        foreach (PlayerScript player in players)
+        {
+            player.ShipComponent = null;
+        }
+        ServerUI.SetActive(true);
+        foreach (Transform child in Level)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
