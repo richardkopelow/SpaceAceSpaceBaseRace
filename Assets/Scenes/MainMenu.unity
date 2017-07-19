@@ -134,7 +134,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 64568286}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1900258251}
@@ -653,6 +653,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1777300515}
+  - component: {fileID: 1777300516}
   m_Layer: 0
   m_Name: MenuObjectSpawner
   m_TagString: Untagged
@@ -673,6 +674,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1777300516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1777300514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb4f90942e0674e4db742bb493bae716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Density: 0.06
+  OrthographicHeight: 10
+  Asteroid: {fileID: 50584650165146480, guid: abfad8695d2fb124583db644d21e10f7, type: 2}
 --- !u!1 &1813351647
 GameObject:
   m_ObjectHideFlags: 0
