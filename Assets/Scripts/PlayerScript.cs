@@ -57,6 +57,11 @@ public class PlayerScript : NetworkBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        GameManger.Instance.DeregisterPlayer(this);
+    }
+
     #region UI Handlers
     private void redTeamClick()
     {

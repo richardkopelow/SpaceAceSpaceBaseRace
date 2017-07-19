@@ -59,6 +59,13 @@ public class GameManger : NetworkBehaviour
         StartCoroutine(delayedUpdatePlayerUIs(0.2f));
     }
 
+    public void DeregisterPlayer(PlayerScript player)
+    {
+        players.Remove(player);
+        PlayerCountText.text = "Players: " + players.Count;
+        StartCoroutine(delayedUpdatePlayerUIs(0.2f));
+    }
+
     public void Disassociate(PlayerScript player)
     {
         redTeam.Remove(player);
@@ -92,7 +99,7 @@ public class GameManger : NetworkBehaviour
         player.ComponentIndex += diff;
     }
 
-    private void UpdatePlayerUI(PlayerScript player)
+    private void updatePlayerUI(PlayerScript player)
     {
         string data;
         if (player.Team == TeamEnum.None)
@@ -127,7 +134,7 @@ public class GameManger : NetworkBehaviour
     {
         foreach (PlayerScript player in players)
         {
-            UpdatePlayerUI(player);
+            updatePlayerUI(player);
         }
     }
 
