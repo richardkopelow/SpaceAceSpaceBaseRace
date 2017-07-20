@@ -123,6 +123,10 @@ public class PlayerScript : NetworkBehaviour
     [TargetRpc]
     public void TargetAssignJob(NetworkConnection target, JobsEnum job)
     {
+        if (job== JobsEnum.ComponentPicker)
+        {
+            Ready = false;
+        }
         playerUIManager.SetUI(job);
     }
 

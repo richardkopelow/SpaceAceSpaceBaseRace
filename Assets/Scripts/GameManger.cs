@@ -26,7 +26,6 @@ public class GameManger : NetworkBehaviour
     private LevelGenerator levelGenerator;
 
     private List<PlayerScript> players;
-    private List<PlayerScript> readyPlayers;
     private List<PlayerScript> blueTeam;
     private List<PlayerScript> redTeam;
 
@@ -47,7 +46,6 @@ public class GameManger : NetworkBehaviour
         players = new List<PlayerScript>();
         redTeam = new List<PlayerScript>();
         blueTeam = new List<PlayerScript>();
-        readyPlayers = new List<PlayerScript>();
 
         levelGenerator = GetComponent<LevelGenerator>();
     }
@@ -63,6 +61,7 @@ public class GameManger : NetworkBehaviour
     {
         players.Remove(player);
         PlayerCountText.text = "Players: " + players.Count;
+        Disassociate(player);
         StartCoroutine(delayedUpdatePlayerUIs(0.2f));
     }
 
@@ -148,21 +147,17 @@ public class GameManger : NetworkBehaviour
     {
         if (isReady)
         {
-            if (!readyPlayers.Contains(player))
+            bool good = true;
+            foreach (PlayerScript p in players)
             {
-                readyPlayers.Add(player);
-                bool good = true;
-                foreach (PlayerScript p in players)
+                if (!p.Ready)
                 {
-                    if (!p.Ready)
-                    {
-                        good = false;
-                    }
+                    good = false;
                 }
-                if (good)
-                {
-                    StartGame();
-                }
+            }
+            if (good)
+            {
+                StartGame();
             }
         }
         updatePlayerUIs();

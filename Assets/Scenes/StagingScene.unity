@@ -151,7 +151,7 @@ MonoBehaviour:
   m_OfflineScene: MainMenu
   m_OnlineScene: PlayScene
   m_SpawnPrefabs: []
-  m_CustomConfig: 0
+  m_CustomConfig: 1
   m_MaxConnections: 4
   m_ConnectionConfig:
     m_PacketSize: 1440
@@ -159,7 +159,7 @@ MonoBehaviour:
     m_ResendTimeout: 1200
     m_DisconnectTimeout: 2000
     m_ConnectTimeout: 2000
-    m_MinUpdateTimeout: 10
+    m_MinUpdateTimeout: 20
     m_PingTimeout: 500
     m_ReducedPingTimeout: 100
     m_AllCostTimeout: 20
@@ -193,7 +193,7 @@ MonoBehaviour:
     m_MaxTimerTimeout: 12000
     m_MinNetSimulatorTimeout: 1
     m_MaxNetSimulatorTimeout: 12000
-  m_Channels: 
+  m_Channels: 0500000000000000
   m_UseWebSockets: 0
   m_UseSimulator: 0
   m_SimulatedLatency: 1
