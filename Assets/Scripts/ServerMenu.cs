@@ -8,6 +8,8 @@ using ZXing.QrCode;
 public class ServerMenu : MonoBehaviour
 {
     public RawImage QRCode;
+    public RectTransform LeftBackground;
+    public RectTransform RightBackground;
 
     void Start()
     {
@@ -16,6 +18,11 @@ public class ServerMenu : MonoBehaviour
         qrCodeTrans.sizeDelta = new Vector2(minSize, minSize);
         Texture2D code = generateQR(Network.player.ipAddress);
         QRCode.texture = code;
+
+        float backgroundWidthPercent = (Screen.width - minSize) / 2f/ Screen.width;
+        LeftBackground.anchorMax = new Vector2(backgroundWidthPercent, 1);
+        RightBackground.anchorMin = new Vector2(1 - backgroundWidthPercent, 0);
+
     }
 
     #region QRCode
