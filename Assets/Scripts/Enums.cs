@@ -8,5 +8,6 @@
 public enum JobsEnum
 {
     ComponentPicker,
-    Thruster
+    Thruster,
+    Rotator
 }
